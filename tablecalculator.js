@@ -26,7 +26,7 @@ tinymce.PluginManager.add("tablecalculator", function(editor, url)
 					if (typeof result === "undefined")
 						{
 						parentElement.className = "calculatorTinyMCE" + encodeURIComponent(inputtedCalc);
-						parentElement.innerHTML = "Error1";
+						parentElement.innerHTML = "Error";
 						}
 						else
 						{
@@ -37,13 +37,13 @@ tinymce.PluginManager.add("tablecalculator", function(editor, url)
 					catch(err)
 					{
 					parentElement.className = "calculatorTinyMCE" + encodeURIComponent(inputtedCalc);
-					parentElement.innerHTML = "Error2";
+					parentElement.innerHTML = "Error";
 					}
 				}
 				else
 				{
 				parentElement.className = "calculatorTinyMCE" + encodeURIComponent(inputtedCalc);
-				parentElement.innerHTML = "Error3";
+				parentElement.innerHTML = "Error";
 				}
 			}
 			else
