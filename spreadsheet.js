@@ -52,23 +52,27 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 						{
 						parentElement.className = "calculatorTinyMCE" + encodeURIComponent(inputtedCalc);
 						parentElement.innerHTML = "Error";
+						editor.insertContent("");
 						}
 						else
 						{
 						parentElement.className = "calculatorTinyMCE" + encodeURIComponent(inputtedCalc);
 						parentElement.innerHTML = result;
+						editor.insertContent("");
 						}
 					}
 					catch(err)
 					{
 					parentElement.className = "calculatorTinyMCE" + encodeURIComponent(inputtedCalc);
 					parentElement.innerHTML = "Error";
+					editor.insertContent("");
 					}
 				}
 				else
 				{
 				parentElement.className = "calculatorTinyMCE" + encodeURIComponent(inputtedCalc);
 				parentElement.innerHTML = "Error";
+				editor.insertContent("");
 				}
 			}
 			else
@@ -76,6 +80,7 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 			if (initialClass.substring(0,17)=="calculatorTinyMCE")
 				{
 				tinymce.activeEditor.dom.removeClass(parentElement, initialClass);
+				editor.insertContent("");
 				}
 			}
 		}
