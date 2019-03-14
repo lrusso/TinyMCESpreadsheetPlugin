@@ -1,2 +1,2 @@
 # TinyMCETableCalculatorPlugin
-Table Calculator Spreadsheet-like plugin for TinyMCE
+Table Calculator, Spreadsheet like, plugin for TinyMCE
