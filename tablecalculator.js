@@ -6,12 +6,12 @@ tinymce.PluginManager.add("tablecalculator", function(editor, url)
 	if (editor.settings.language=="es")
 		{
 		STRING_INSERTCALC = "Ingresar/editar c\u00E1lculo";
-		STRING_WRONGLOCATION = "ERROR: Debe estar posicionado dentro de una tabla.";
+		STRING_WRONGLOCATION = "Debe estar posicionado dentro de una tabla.";
 		}
 		else
 		{
 		STRING_INSERTCALC = "Insert/edit calculation";
-		STRING_WRONGLOCATION = "ERROR: You must be placed inside a table.";
+		STRING_WRONGLOCATION = "You must be placed inside a table.";
 		}
 
 	function updateField(inputtedCalc,parentElement,initialClass)
@@ -94,7 +94,21 @@ tinymce.PluginManager.add("tablecalculator", function(editor, url)
 		var elementStoredClassName = elementStoredNode.className;
 		var elementStoredNodeName = elementStoredNode.nodeName;
 
-		if (elementStoredNodeName=="TD" || elementStoredNodeOffsetParent.nodeName=="TD")
+		var tableLocated = false;
+
+		if (elementStoredNodeName=="TD")
+			{
+			tableLocated = true
+			}
+		else if(elementStoredNodeOffsetParent!=null)
+			{
+			if (elementStoredNodeOffsetParent.nodeName=="TD")
+				{
+				tableLocated = true;
+				}
+			}
+
+		if (tableLocated==true)
 			{
 			var defaultCalc = "";
 
