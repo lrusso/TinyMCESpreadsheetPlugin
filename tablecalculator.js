@@ -75,6 +75,7 @@ tinymce.PluginManager.add("tablecalculator", function(editor, url)
 				character!="-" &&
 				character!="*" &&
 				character!="/" &&
+				character!="%" &&
 				character!="(" &&
 				character!=")" &&
 				character!="$" &&
