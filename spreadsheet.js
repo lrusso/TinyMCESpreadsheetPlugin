@@ -224,6 +224,24 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 
 	editor.on("keyup", function(e)
 		{
+		if (e.shiftKey==false && e.metaKey==false && e.ctrlKey==false)
+			{
+			if (e.keyCode!=37 && e.keyCode!=39 && e.keyCode!=38 && e.keyCode!=40)
+				{
+				if (editor.selection.getContent().length==0)
+					{
+					var elementStoredNode = editor.selection.getNode();
+					if (elementStoredNode.nodeName=="TD")
+						{
+						getTextNodesValues(editor, getTextNodesValues(editor,elementStoredNode.offsetParent));
+						}
+					}
+				}
+			}
+		});
+
+	editor.on("paste", function(e)
+		{
 		var elementStoredNode = editor.selection.getNode();
 		if (elementStoredNode.nodeName=="TD")
 			{
