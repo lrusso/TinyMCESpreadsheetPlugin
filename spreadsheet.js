@@ -34,16 +34,22 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 				var column = getColumnNumber(match2[1]);
 				var row = match2[2] - 1;
 				var cellValue = tableAsArray[row][column];
-				inputtedCalcTemp = replaceAll(inputtedCalcTemp,location,cellValue);
+				var cellValueNumber = "";
+				var splitter = cellValue.split(" ");
+				if (isNumber(splitter[0])==true)
+					{
+					cellValueNumber = splitter[0];
+					}
+				else if (isNumber(splitter[1])==true)
+					{
+					cellValueNumber = splitter[1];
+					}
+				inputtedCalcTemp = replaceAll(inputtedCalcTemp,location,cellValueNumber);
 				}
 				catch(err)
 				{
 				}
 			}
-
-		inputtedCalcTemp = inputtedCalcTemp.replace(/ /g, "");
-		inputtedCalcTemp = inputtedCalcTemp.replace(/[$]/g, "");
-		inputtedCalcTemp = inputtedCalcTemp.trim();
 
 		if (inputtedCalcTemp!="")
 			{
@@ -165,6 +171,30 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 				}
 			}
 		return false;
+		}
+
+	function isNumber(input)
+		{
+		for(var i = 0; i < input.length; i++)
+			{
+			var character = input.charAt(i);
+			if (character!="0" &&
+				character!="1" &&
+				character!="2" &&
+				character!="3" &&
+				character!="4" &&
+				character!="5" &&
+				character!="6" &&
+				character!="7" &&
+				character!="8" &&
+				character!="9" &&
+				character!="."
+				)
+				{
+				return false;
+				}
+			}
+		return true;
 		}
 
 	function createDialog()
