@@ -19,13 +19,35 @@ tinymce.PluginManager.add("tablecalculator", function(editor, url)
 
 	function updateField(inputtedCalc,parentElement,initialClass)
 		{
-		if (inputtedCalc!="")
+		var tableAsArray = tableToArray(parentElement.offsetParent.innerHTML);
+		var inputtedCalcTemp = inputtedCalc;
+		var pattern = /[A-Z]{1}\d+/gm;
+		var match;
+
+		while (match = pattern.exec(inputtedCalcTemp))
 			{
-			if (checkingErrors(inputtedCalc)==false)
+			try
+				{
+				var location = match[0];
+				var pattern2 = /([a-zA-Z]*)([0-9]*)/;
+				var match2 = pattern2.exec(location);
+				var column = getColumnNumber(match2[1]);
+				var row = match2[2] - 1;
+				var cellValue = tableAsArray[row][column];
+				inputtedCalcTemp = replaceAll(inputtedCalcTemp,location,cellValue);
+				}
+				catch(err)
+				{
+				}
+			}
+
+		if (inputtedCalcTemp!="")
+			{
+			if (checkingErrors(inputtedCalcTemp)==false)
 				{
 				try
 					{
-					var result = eval(inputtedCalc);
+					var result = eval(inputtedCalcTemp);
 					if (typeof result === "undefined")
 						{
 						parentElement.className = "calculatorTinyMCE" + encodeURIComponent(inputtedCalc);
@@ -56,6 +78,36 @@ tinymce.PluginManager.add("tablecalculator", function(editor, url)
 				tinymce.activeEditor.dom.removeClass(parentElement, initialClass);
 				}
 			}
+		}
+
+	function tableToArray(html)
+		{
+		var html       = "<table>" + html + "</table>";
+		var parser     = new DOMParser();
+		var doc        = parser.parseFromString(html, "text/html");
+		var tableFinal = [].map.call(doc.querySelectorAll("tr"), tr => 
+			{
+			return [].slice.call(tr.querySelectorAll("td")).reduce( (a,b,i) =>
+				{
+				return a[(i+1)] = b.textContent, a;
+				}, {});
+			});
+		return tableFinal;
+		}
+
+	function getColumnNumber(val)
+		{
+		var base = "ABCDEFGHIJKLMNOPQRSTUVWXYZ", i, j, result = 0;
+		for (i = 0, j = val.length - 1; i < val.length; i += 1, j -= 1)
+			{
+			result += Math.pow(base.length, j) * (base.indexOf(val[i]) + 1);
+			}
+		return result;
+		}
+
+	function replaceAll(str, find, replace)
+		{
+		return str.replace(new RegExp(find, "g"), replace);
 		}
 
 	function checkingErrors(input)
