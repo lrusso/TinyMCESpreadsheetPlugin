@@ -7,3 +7,22 @@ Table Calculator, Spreadsheet like, plugin for TinyMCE. The plugin stores the ma
 ## Demo:
 
 https://lrusso.github.io/TinyMCETableCalculatorPlugin/demo.htm
+
+## Example of math code:
+
+```
+"$"+10+20+30
+```
+
+## How to add it to TinyMCE
+
+Add the Chart plugin script to your TinyMCE Web:
+```
+<script src="tablecalculator.js"></script> 
+```
+
+Add the plugin references into your TinyMCE configuration:
+```
+plugins: "tablecalculator",
+toolbar1: "tablecalculator",
+```
