@@ -222,30 +222,33 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 			}
 		}
 
-	editor.on("keyup", function(e)
+	editor.on("nodechange", function(e)
 		{
-		if (e.shiftKey==false && e.metaKey==false && e.ctrlKey==false)
+		try
 			{
-			if (e.keyCode!=37 && e.keyCode!=39 && e.keyCode!=38 && e.keyCode!=40)
+			var elementStoredNode = editor.selection.getNode();
+			if (elementStoredNode.nodeName=="TD")
 				{
-				if (editor.selection.getContent().length==0)
-					{
-					var elementStoredNode = editor.selection.getNode();
-					if (elementStoredNode.nodeName=="TD")
-						{
-						getTextNodesValues(editor, getTextNodesValues(editor,elementStoredNode.offsetParent));
-						}
-					}
+				getTextNodesValues(editor, getTextNodesValues(editor,elementStoredNode.offsetParent));
 				}
+			}
+			catch(err)
+			{
 			}
 		});
 
 	editor.on("paste", function(e)
 		{
-		var elementStoredNode = editor.selection.getNode();
-		if (elementStoredNode.nodeName=="TD")
+		try
 			{
-			getTextNodesValues(editor, getTextNodesValues(editor,elementStoredNode.offsetParent));
+			var elementStoredNode = editor.selection.getNode();
+			if (elementStoredNode.nodeName=="TD")
+				{
+				getTextNodesValues(editor, getTextNodesValues(editor,elementStoredNode.offsetParent));
+				}
+			}
+			catch(err)
+			{
 			}
 		});
 
@@ -255,8 +258,6 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 			{
 			for (var i=0; i<node.childNodes.length; i++)
 				{
-				var el = node.childNodes[i];
-
 				if (node.className.substring(0,17)=="calculatorTinyMCE")
 					{
 					var elementStoredClassName = node.className;
@@ -265,6 +266,7 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 					updateField(defaultCalc,node,elementStoredClassName);
 					}
 
+				var el = node.childNodes[i];
 				if (el.childNodes.length > 0)
 					{
 					getTextNodesValues(tinymce,el);
