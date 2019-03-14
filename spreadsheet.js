@@ -34,6 +34,7 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 				var column = getColumnNumber(match2[1]);
 				var row = match2[2] - 1;
 				var cellValue = tableAsArray[row][column];
+				cellValue = cellValue.trim();
 				var cellValueNumber = "";
 				var splitter = cellValue.split(" ");
 				if (isNumber(splitter[0])==true)
