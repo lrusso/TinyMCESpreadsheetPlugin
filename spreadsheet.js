@@ -70,6 +70,10 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 						}
 						else
 						{
+						if (result.indexOf(".")>-1)
+							{
+							result = result.substring(0,result.indexOf(".")+3);
+							}
 						parentElement.className = "calculatorTinyMCE" + encodeURIComponent(inputtedCalc);
 						parentElement.innerHTML = result;
 						if (setDirty==true)
