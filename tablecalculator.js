@@ -14,31 +14,43 @@ tinymce.PluginManager.add("tablecalculator", function(editor, url)
 		STRING_WRONGLOCATION = "ERROR: You must be placed inside a table.";
 		}
 
-	function updateField(e)
+	function updateField(inputtedCalc,parentElement,initialClass)
 		{
-		var elementStoredNode = editor.selection.getNode();
-		var elementStoredClassName = elementStoredNode.className;
-		var elementStoredNodeName = elementStoredNode.nodeName;
-
-		if (elementStoredNodeName=="TD")
+		if (inputtedCalc!="")
 			{
-			if (checkingErrors(e)==false)
+			if (checkingErrors(inputtedCalc)==false)
 				{
 				try
 					{
-					elementStoredNode.className = "calculatorTinyMCE" + encodeURIComponent(e);
-					elementStoredNode.innerHTML = eval(e);
+					var result = eval(inputtedCalc);
+					if (typeof result === "undefined")
+						{
+						parentElement.className = "calculatorTinyMCE" + encodeURIComponent(inputtedCalc);
+						parentElement.innerHTML = "Error1";
+						}
+						else
+						{
+						parentElement.className = "calculatorTinyMCE" + encodeURIComponent(inputtedCalc);
+						parentElement.innerHTML = result;
+						}
 					}
 					catch(err)
 					{
-					elementStoredNode.className = "calculatorTinyMCE" + encodeURIComponent(e);
-					elementStoredNode.innerHTML = "Error";
+					parentElement.className = "calculatorTinyMCE" + encodeURIComponent(inputtedCalc);
+					parentElement.innerHTML = "Error2";
 					}
 				}
 				else
 				{
-				elementStoredNode.className = "calculatorTinyMCE" + encodeURIComponent(e);
-				elementStoredNode.innerHTML = "Error";
+				parentElement.className = "calculatorTinyMCE" + encodeURIComponent(inputtedCalc);
+				parentElement.innerHTML = "Error3";
+				}
+			}
+			else
+			{
+			if (initialClass.substring(0,17)=="calculatorTinyMCE")
+				{
+				tinymce.activeEditor.dom.removeClass(parentElement, initialClass);
 				}
 			}
 		}
@@ -78,10 +90,11 @@ tinymce.PluginManager.add("tablecalculator", function(editor, url)
 	function createDialog()
 		{
 		var elementStoredNode = editor.selection.getNode();
+		var elementStoredNodeOffsetParent = editor.selection.getNode().offsetParent;
 		var elementStoredClassName = elementStoredNode.className;
 		var elementStoredNodeName = elementStoredNode.nodeName;
 
-		if (elementStoredNodeName=="TD")
+		if (elementStoredNodeName=="TD" || elementStoredNodeOffsetParent.nodeName=="TD")
 			{
 			var defaultCalc = "";
 
@@ -117,7 +130,14 @@ tinymce.PluginManager.add("tablecalculator", function(editor, url)
 					},
 				onsubmit: function(e)
 					{
-					updateField(e.data.inputtedCalc);
+					if (elementStoredNodeName=="TD")
+						{
+						updateField(e.data.inputtedCalc,elementStoredNode,elementStoredClassName);
+						}
+					else if(elementStoredNodeOffsetParent.nodeName=="TD")
+						{
+						updateField(e.data.inputtedCalc,elementStoredNodeOffsetParent,elementStoredClassName);
+						}
 					}
 				});
 			}
@@ -127,7 +147,7 @@ tinymce.PluginManager.add("tablecalculator", function(editor, url)
 			}
 		}
 
-	editor.addButton(  "tablecalculator", {tooltip: STRING_INSERTCALC, icon: false, stateSelector: "td", image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEwAACxMBAJqcGAAAAFBJREFUOI1jYICAkwwMDP9JxCcYGBgYGKEG/GcgDzCyoAsQqRFuIROZNsMBugtI9grFLkA3gJEBNRwI8Sl3AcXROOqFweSFk2RoPsbAwMAAAIXIFUTBEfO7AAAAAElFTkSuQmCC", onclick: function() {createDialog();}});
+	editor.addButton(  "tablecalculator", {tooltip: STRING_INSERTCALC, icon: false, image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEwAACxMBAJqcGAAAAFBJREFUOI1jYICAkwwMDP9JxCcYGBgYGKEG/GcgDzCyoAsQqRFuIROZNsMBugtI9grFLkA3gJEBNRwI8Sl3AcXROOqFweSFk2RoPsbAwMAAAIXIFUTBEfO7AAAAAElFTkSuQmCC", onclick: function() {createDialog();}});
 	editor.addMenuItem("tablecalculator", {text: STRING_INSERTCALC, context: "insert", onclick: function() {createDialog();} });
 
 	return{getMetadata: function (){return {name: "Table calculator plugin",url: "https://lrusso.com.ar"};}};
