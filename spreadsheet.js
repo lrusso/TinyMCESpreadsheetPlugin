@@ -165,6 +165,7 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 				character!="(" &&
 				character!=")" &&
 				character!="$" &&
+				character!=" " &&
 				character!="\""
 				)
 				{
