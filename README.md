@@ -16,7 +16,7 @@ https://lrusso.github.io/TinyMCETableCalculatorPlugin/demo.htm
 
 ## How to add it to TinyMCE
 
-Add the Chart plugin script to your TinyMCE Web:
+Add the Spreadsheet plugin script to your TinyMCE Web:
 ```
 <script src="spreadsheet.js"></script> 
 ```
