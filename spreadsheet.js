@@ -7,7 +7,7 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 	if (editor.settings.language=="es")
 		{
 		STRING_MENU = "F\u00F3rmula";
-		STRING_TITLE = "Ingresar/editar f\u00F3rmula";
+		STRING_TITLE = "Insertar/editar f\u00F3rmula";
 		STRING_ERROR = "ERROR: Debe estar posicionado dentro de una tabla.";
 		}
 		else
