@@ -11,7 +11,7 @@ https://lrusso.github.io/TinyMCETableCalculatorPlugin/demo.htm
 ## Example of math code:
 
 ```
-"$"+(B2+B3+B4)
+"$"+(A1+B2+C3*20/50)
 ```
 
 ## How to add it to TinyMCE
