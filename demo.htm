@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>TinyMCE Table Calculator Plugin | Leonardo Russo</title>
+		<script src="https://lrusso.github.io/TinyMCETableCalculatorPlugin/tinymce.min.js"></script> 
+		<script src="tablecalculator.js"></script> 
+		<script>
+			tinymce.init(
+							{
+							selector:"#my_TinyMCE_Document",
+							auto_focus: "my_TinyMCE_Document",
+							language: "en",
+							plugins: "tablecalculator",
+							toolbar1: "tablecalculator",
+							menubar: false,
+							}
+						);
+
+			function resizeTinyMCE()
+				{
+				var w = window, d = document, e = d.documentElement, g = d.getElementsByTagName("body")[0], x = w.innerWidth || e.clientWidth || g.clientWidth, y = w.innerHeight|| e.clientHeight|| g.clientHeight;
+				var editHeight = y - 76;
+				tinymce.get("my_TinyMCE_Document").theme.resizeTo("100%", editHeight);
+				}
+
+			window.onload = function()
+				{
+				resizeTinyMCE();
+				};
+
+			window.onresize = function()
+				{
+				resizeTinyMCE();
+				};
+
+		</script>
+	</head>
+	<body style="margin:0;padding:0;">
+		<textarea name="documentdata" id="my_TinyMCE_Document"></textarea>
+	</body>
+</html>
