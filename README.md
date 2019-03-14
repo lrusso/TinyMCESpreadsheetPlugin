@@ -1,6 +1,6 @@
 # TinyMCE Table Calculator Plugin
 
-Table Calculator, Spreadsheet like, plugin for TinyMCE. The plugin stores the math calculation as a class name in the cell tag and inserts the result as the cell value. It only works inside tables. Operators like + - * / % ( ) and symbols like " $ . are allowed. This plugin allows you make references between cells, but it won't update the cell value automatically if you modify the table. The cell must be updated manually. Position the TinyMCE cursor in a cell, and press the plugin icon to insert/edit the math calculation of that cell.
+Table Calculator, Spreadsheet like, plugin for TinyMCE. The plugin stores the math calculation as a class name in the cell tag and inserts the result as the cell value. It only works inside tables. Operators like + - * / % ( ) and symbols like " $ . are allowed. This plugin allows you make references between cells, but it won't update the cell value automatically if you modify the table. The cell with the formula must be updated manually. Position the TinyMCE cursor in a cell, and press the plugin icon to insert/edit the math calculation of that cell.
 
 ![alt screenshot](https://raw.githubusercontent.com/lrusso/TinyMCETableCalculatorPlugin/master/tablecalculator.png)
 
@@ -8,7 +8,7 @@ Table Calculator, Spreadsheet like, plugin for TinyMCE. The plugin stores the ma
 
 https://lrusso.github.io/TinyMCETableCalculatorPlugin/demo.htm
 
-## Example of math code:
+## Example of formula:
 
 ```
 "$"+(A1+B2+C3*20/50)
