@@ -226,10 +226,13 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 		{
 		try
 			{
-			var elementStoredNode = editor.selection.getNode();
-			if (elementStoredNode.nodeName=="TD")
+			if (editor.selection.getContent().length==0)
 				{
-				getTextNodesValues(editor, getTextNodesValues(editor,elementStoredNode.offsetParent));
+				var elementStoredNode = editor.selection.getNode();
+				if (elementStoredNode.nodeName=="TD")
+					{
+					getTextNodesValues(editor, getTextNodesValues(editor,elementStoredNode.offsetParent));
+					}
 				}
 			}
 			catch(err)
