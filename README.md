@@ -6,7 +6,7 @@ Table Spreadsheet plugin for TinyMCE. The plugin stores the cell formula as a cl
 
 ## Demo:
 
-https://lrusso.github.io/TinyMCETableCalculatorPlugin/demo.htm
+https://lrusso.github.io/TinyMCESpreadsheet/demo.htm
 
 ## Example of formula:
 
