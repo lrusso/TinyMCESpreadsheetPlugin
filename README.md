@@ -11,7 +11,7 @@ https://lrusso.github.io/TinyMCETableCalculatorPlugin/demo.htm
 ## Example of math code:
 
 ```
-"$"+10+20+30
+"$"+(10+20+30)
 ```
 
 ## How to add it to TinyMCE
