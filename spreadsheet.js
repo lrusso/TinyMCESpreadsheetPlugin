@@ -17,7 +17,7 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 		STRING_ERROR = "ERROR: You must be located inside a table.";
 		}
 
-	function updateField(inputtedCalc,parentElement,initialClass)
+	function updateField(inputtedCalc,parentElement,initialClass,setDirty)
 		{
 		var tableAsArray = tableToArray(parentElement.offsetParent.innerHTML);
 		var inputtedCalcTemp = inputtedCalc;
@@ -52,27 +52,39 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 						{
 						parentElement.className = "calculatorTinyMCE" + encodeURIComponent(inputtedCalc);
 						parentElement.innerHTML = "Error";
-						editor.insertContent("");
+						if (setDirty==true)
+							{
+							editor.insertContent("");
+							}
 						}
 						else
 						{
 						parentElement.className = "calculatorTinyMCE" + encodeURIComponent(inputtedCalc);
 						parentElement.innerHTML = result;
-						editor.insertContent("");
+						if (setDirty==true)
+							{
+							editor.insertContent("");
+							}
 						}
 					}
 					catch(err)
 					{
 					parentElement.className = "calculatorTinyMCE" + encodeURIComponent(inputtedCalc);
 					parentElement.innerHTML = "Error";
-					editor.insertContent("");
+					if (setDirty==true)
+						{
+						editor.insertContent("");
+						}
 					}
 				}
 				else
 				{
 				parentElement.className = "calculatorTinyMCE" + encodeURIComponent(inputtedCalc);
 				parentElement.innerHTML = "Error";
-				editor.insertContent("");
+				if (setDirty==true)
+					{
+					editor.insertContent("");
+					}
 				}
 			}
 			else
@@ -80,7 +92,10 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 			if (initialClass.substring(0,17)=="calculatorTinyMCE")
 				{
 				tinymce.activeEditor.dom.removeClass(parentElement, initialClass);
-				editor.insertContent("");
+				if (setDirty==true)
+					{
+					editor.insertContent("");
+					}
 				}
 			}
 		}
@@ -207,11 +222,11 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 					{
 					if (elementStoredNodeName=="TD")
 						{
-						updateField(e.data.inputtedCalc,elementStoredNode,elementStoredClassName);
+						updateField(e.data.inputtedCalc,elementStoredNode,elementStoredClassName,true);
 						}
 					else if(elementStoredNodeOffsetParent.nodeName=="TD")
 						{
-						updateField(e.data.inputtedCalc,elementStoredNodeOffsetParent,elementStoredClassName);
+						updateField(e.data.inputtedCalc,elementStoredNodeOffsetParent,elementStoredClassName,true);
 						}
 					}
 				});
@@ -266,7 +281,7 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 					var elementStoredClassName = node.className;
 					var tempValue = decodeURIComponent(elementStoredClassName);
 					var defaultCalc = tempValue.substring(17,tempValue.length);
-					updateField(defaultCalc,node,elementStoredClassName);
+					updateField(defaultCalc,node,elementStoredClassName,false);
 					}
 
 				var el = node.childNodes[i];
