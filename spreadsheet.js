@@ -80,23 +80,19 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 						result = String(result);
 						if (result.indexOf(".")>-1)
 							{
-							var dotPosition = result.indexOf(".") + 1;
-							var residualLength = 0;
-							var residualZero = false;
-							if (result.length-dotPosition==1)
+							var splitter = result.split(" ");
+							var resultNumber = "";
+							if (isNumber(splitter[0])==true)
 								{
-								residualLength =  dotPosition + 1;
-								residualZero = true;
+								resultNumber = splitter[0];
 								}
-							else
+							else if (isNumber(splitter[1])==true)
 								{
-								residualLength = dotPosition + 2;
+								resultNumber = splitter[1];
 								}
-							result = result.substring(0,residualLength);
-							if (residualZero==true)
-								{
-								result = result + "0";
-								}
+
+							var resultNumberFinal = parseFloat(resultNumber).toFixed(2);
+							result = replaceAll(result,resultNumber,resultNumberFinal);
 							}
 						parentElement.className = "calculatorTinyMCE" + encodeURIComponent(inputtedCalc);
 						parentElement.innerHTML = result;
