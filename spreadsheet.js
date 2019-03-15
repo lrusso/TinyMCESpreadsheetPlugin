@@ -124,7 +124,7 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 			}
 			else
 			{
-			if (initialClass.substring(0,17)=="spreadsheetTinyMCE")
+			if (initialClass.substring(0,18)=="spreadsheetTinyMCE")
 				{
 				tinymce.activeEditor.dom.removeClass(parentElement, initialClass);
 				if (setDirty==true)
@@ -234,7 +234,7 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 			var elementStoredNodeOffsetParent = editor.selection.getNode().offsetParent;
 			if (elementStoredNode.nodeName=="TD")
 				{
-				if (elementStoredNode.className.substring(0,17)=="spreadsheetTinyMCE")
+				if (elementStoredNode.className.substring(0,18)=="spreadsheetTinyMCE")
 					{
 					toolbarIcon.active(true);
 					}
@@ -251,7 +251,7 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 				{
 				if (elementStoredNodeOffsetParent.nodeName=="TD")
 					{
-					if (elementStoredNodeOffsetParent.className.substring(0,17)=="spreadsheetTinyMCE")
+					if (elementStoredNodeOffsetParent.className.substring(0,18)=="spreadsheetTinyMCE")
 						{
 						toolbarIcon.active(true);
 						}
@@ -286,7 +286,7 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 			{
 			for (var i=0; i<node.childNodes.length; i++)
 				{
-				if (node.className.substring(0,17)=="spreadsheetTinyMCE")
+				if (node.className.substring(0,18)=="spreadsheetTinyMCE")
 					{
 					var elementStoredClassName = node.className;
 					var tempValue = decodeURIComponent(elementStoredClassName);
@@ -356,7 +356,7 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 				{
 				try
 					{
-					if (elementStoredClassName.substring(0,17)=="spreadsheetTinyMCE")
+					if (elementStoredClassName.substring(0,18)=="spreadsheetTinyMCE")
 						{
 						var tempValue = decodeURIComponent(elementStoredClassName);
 						defaultCalc = tempValue.substring(17,tempValue.length);
