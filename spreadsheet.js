@@ -264,6 +264,10 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 							}
 						getTextNodesValues(editor, getTextNodesValues(editor,elementStoredNodeOffsetParent.offsetParent));
 						}
+						else
+						{
+						toolbarIcon.active(false);
+						}
 					}
 					else
 					{
@@ -277,6 +281,7 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 			}
 			catch(err)
 			{
+			toolbarIcon.active(false);
 			}
 		}
 
