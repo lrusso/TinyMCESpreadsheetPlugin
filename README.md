@@ -11,7 +11,7 @@ https://lrusso.github.io/TinyMCESpreadsheetPlugin/demo.htm
 ## Example of formula:
 
 ```
-"$"+(A1+B2+C3*20/50)
+"$ "+(B2+B3+B4)
 ```
 
 ## How to add it to TinyMCE
