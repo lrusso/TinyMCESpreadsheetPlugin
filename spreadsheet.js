@@ -46,6 +46,10 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 					{
 					cellValueNumber = splitter[1];
 					}
+				if (cellValue=="")
+					{
+					cellValueNumber = 0;
+					}
 				inputtedCalcTemp = replaceAll(inputtedCalcTemp,location,cellValueNumber);
 				}
 				catch(err)
