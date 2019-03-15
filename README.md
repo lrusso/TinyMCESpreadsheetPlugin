@@ -1,6 +1,6 @@
 # TinyMCE Spreadsheet Plugin
 
-Spreadsheet plugin for TinyMCE. The plugin stores the cell formula as a class name in the cell tag and inserts the result as the cell value. It only works inside tables. Operators like + - * / % ( ) and symbols like " $ . are allowed. This plugin allows you to make references between cells.
+The plugin stores the cell formula as a class name in the cell tag and inserts the result as the cell value. It only works inside tables. Operators like + - * / % ( ) and symbols like " $ . are allowed.
 
 ![alt screenshot](https://raw.githubusercontent.com/lrusso/TinyMCESpreadsheetPlugin/master/spreadsheet.png)
 
