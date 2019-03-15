@@ -235,9 +235,17 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 			if (editor.selection.getContent().length==0)
 				{
 				var elementStoredNode = editor.selection.getNode();
+				var elementStoredNodeOffsetParent = editor.selection.getNode().offsetParent;
 				if (elementStoredNode.nodeName=="TD")
 					{
 					getTextNodesValues(editor, getTextNodesValues(editor,elementStoredNode.offsetParent));
+					}
+				else if(elementStoredNodeOffsetParent!=null)
+					{
+					if (elementStoredNodeOffsetParent.nodeName=="TD")
+						{
+						getTextNodesValues(editor, getTextNodesValues(editor,elementStoredNodeOffsetParent.offsetParent));
+						}
 					}
 				}
 			}
