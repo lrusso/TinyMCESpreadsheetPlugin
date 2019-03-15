@@ -68,7 +68,7 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 					var result = eval(inputtedCalcTemp);
 					if (typeof result === "undefined")
 						{
-						parentElement.className = "calculatorTinyMCE" + encodeURIComponent(inputtedCalc);
+						parentElement.className = "spreadsheetTinyMCE" + encodeURIComponent(inputtedCalc);
 						parentElement.innerHTML = "Error";
 						if (setDirty==true)
 							{
@@ -94,7 +94,7 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 							var resultNumberFinal = parseFloat(resultNumber).toFixed(2);
 							result = replaceAll(result,resultNumber,resultNumberFinal);
 							}
-						parentElement.className = "calculatorTinyMCE" + encodeURIComponent(inputtedCalc);
+						parentElement.className = "spreadsheetTinyMCE" + encodeURIComponent(inputtedCalc);
 						parentElement.innerHTML = result;
 						if (setDirty==true)
 							{
@@ -104,7 +104,7 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 					}
 					catch(err)
 					{
-					parentElement.className = "calculatorTinyMCE" + encodeURIComponent(inputtedCalc);
+					parentElement.className = "spreadsheetTinyMCE" + encodeURIComponent(inputtedCalc);
 					parentElement.innerHTML = "Error";
 					if (setDirty==true)
 						{
@@ -114,7 +114,7 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 				}
 				else
 				{
-				parentElement.className = "calculatorTinyMCE" + encodeURIComponent(inputtedCalc);
+				parentElement.className = "spreadsheetTinyMCE" + encodeURIComponent(inputtedCalc);
 				parentElement.innerHTML = "Error";
 				if (setDirty==true)
 					{
@@ -124,7 +124,7 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 			}
 			else
 			{
-			if (initialClass.substring(0,17)=="calculatorTinyMCE")
+			if (initialClass.substring(0,17)=="spreadsheetTinyMCE")
 				{
 				tinymce.activeEditor.dom.removeClass(parentElement, initialClass);
 				if (setDirty==true)
@@ -234,7 +234,7 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 			var elementStoredNodeOffsetParent = editor.selection.getNode().offsetParent;
 			if (elementStoredNode.nodeName=="TD")
 				{
-				if (elementStoredNode.className.substring(0,17)=="calculatorTinyMCE")
+				if (elementStoredNode.className.substring(0,17)=="spreadsheetTinyMCE")
 					{
 					toolbarIcon.active(true);
 					}
@@ -251,7 +251,7 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 				{
 				if (elementStoredNodeOffsetParent.nodeName=="TD")
 					{
-					if (elementStoredNodeOffsetParent.className.substring(0,17)=="calculatorTinyMCE")
+					if (elementStoredNodeOffsetParent.className.substring(0,17)=="spreadsheetTinyMCE")
 						{
 						toolbarIcon.active(true);
 						}
@@ -286,7 +286,7 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 			{
 			for (var i=0; i<node.childNodes.length; i++)
 				{
-				if (node.className.substring(0,17)=="calculatorTinyMCE")
+				if (node.className.substring(0,17)=="spreadsheetTinyMCE")
 					{
 					var elementStoredClassName = node.className;
 					var tempValue = decodeURIComponent(elementStoredClassName);
@@ -356,7 +356,7 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 				{
 				try
 					{
-					if (elementStoredClassName.substring(0,17)=="calculatorTinyMCE")
+					if (elementStoredClassName.substring(0,17)=="spreadsheetTinyMCE")
 						{
 						var tempValue = decodeURIComponent(elementStoredClassName);
 						defaultCalc = tempValue.substring(17,tempValue.length);
