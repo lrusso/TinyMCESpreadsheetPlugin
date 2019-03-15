@@ -19,7 +19,7 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 
 	function updateField(inputtedCalc,parentElement,initialClass,setDirty)
 		{
-		var tableAsArray = tableToArray(parentElement.offsetParent.innerHTML);
+		var tableAsArray = tableToArray(parentElement.offsetParent);
 		var inputtedCalcTemp = inputtedCalc;
 		var pattern = /[A-Z]{1}\d+/gm;
 		var match;
@@ -31,9 +31,10 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 				var location = match[0];
 				var pattern2 = /([a-zA-Z]*)([0-9]*)/;
 				var match2 = pattern2.exec(location);
-				var column = getColumnNumber(match2[1]);
+				var column = getColumnNumber(match2[1]) - 1;
 				var row = match2[2] - 1;
-				var cellValue = tableAsArray[row][column];
+				var cellObject = tableAsArray[row][column];
+				var cellValue = cellObject.textContent;
 				cellValue = cellValue.trim();
 				var cellValueNumber = "";
 				var splitter = cellValue.split(" ");
@@ -132,19 +133,46 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 			}
 		}
 
-	function tableToArray(html)
+	function tableToArray(a)
 		{
-		var html       = "<table>" + html + "</table>";
-		var parser     = new DOMParser();
-		var doc        = parser.parseFromString(html, "text/html");
-		var tableFinal = [].map.call(doc.querySelectorAll("tr"), tr => 
+		var tableEl = a;
+		var cells2D = [];
+		var rows = tableEl.rows;
+		var rowsLength = rows.length;
+
+		for (var r = 0; r < rowsLength; ++r)
 			{
-			return [].slice.call(tr.querySelectorAll("td")).reduce( (a,b,i) =>
+			cells2D[r] = [];
+			}
+
+		for (var r = 0; r < rowsLength; ++r)
+			{
+			var cells = rows[r].cells;
+			var x = 0;
+
+			for (var c = 0, cellsLength = cells.length; c < cellsLength; ++c)
 				{
-				return a[(i+1)] = b.textContent, a;
-				}, {});
-			});
-		return tableFinal;
+				var cell = cells[c];
+				while (cells2D[r][x])
+					{
+					++x;
+					}
+
+				var x3 = x + (cell.colSpan || 1);
+				var y3 = r + (cell.rowSpan || 1);
+
+				for (var y2 = r; y2 < y3; ++y2)
+					{
+					for (var x2 = x; x2 < x3; ++x2)
+						{
+						cells2D[y2][x2] = cell;
+						}
+					}
+				x = x3;
+				}
+			}
+
+		return cells2D;
 		}
 
 	function getColumnNumber(val)
