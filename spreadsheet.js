@@ -290,7 +290,7 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 					{
 					var elementStoredClassName = node.className;
 					var tempValue = decodeURIComponent(elementStoredClassName);
-					var defaultCalc = tempValue.substring(17,tempValue.length);
+					var defaultCalc = tempValue.substring(18,tempValue.length);
 					updateField(defaultCalc,node,elementStoredClassName,false);
 					}
 
@@ -359,7 +359,7 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 					if (elementStoredClassName.substring(0,18)=="spreadsheetTinyMCE")
 						{
 						var tempValue = decodeURIComponent(elementStoredClassName);
-						defaultCalc = tempValue.substring(17,tempValue.length);
+						defaultCalc = tempValue.substring(18,tempValue.length);
 						}
 					}
 					catch(err)
