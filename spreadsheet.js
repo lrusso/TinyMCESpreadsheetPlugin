@@ -344,12 +344,7 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 			}
 		}
 
-	editor.on("nodechange", function(e)
-		{
-		updateTable();
-		});
-
-	editor.on("paste", function(e)
+	editor.on("change", function(e)
 		{
 		updateTable();
 		});
