@@ -230,13 +230,28 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 		{
 		try
 			{
-			if (editor.selection.getContent().length==0)
+			var elementStoredNode = editor.selection.getNode();
+			var elementStoredNodeOffsetParent = editor.selection.getNode().offsetParent;
+			if (elementStoredNode.nodeName=="TD")
 				{
-				var elementStoredNode = editor.selection.getNode();
-				var elementStoredNodeOffsetParent = editor.selection.getNode().offsetParent;
-				if (elementStoredNode.nodeName=="TD")
+				if (elementStoredNode.className.substring(0,17)=="calculatorTinyMCE")
 					{
-					if (elementStoredNode.className.substring(0,17)=="calculatorTinyMCE")
+					toolbarIcon.active(true);
+					}
+					else
+					{
+					toolbarIcon.active(false);
+					}
+				if (editor.selection.getContent().length==0)
+					{
+					getTextNodesValues(editor, getTextNodesValues(editor,elementStoredNode.offsetParent));
+					}
+				}
+			else if(elementStoredNodeOffsetParent!=null)
+				{
+				if (elementStoredNodeOffsetParent.nodeName=="TD")
+					{
+					if (elementStoredNodeOffsetParent.className.substring(0,17)=="calculatorTinyMCE")
 						{
 						toolbarIcon.active(true);
 						}
@@ -244,25 +259,9 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 						{
 						toolbarIcon.active(false);
 						}
-					getTextNodesValues(editor, getTextNodesValues(editor,elementStoredNode.offsetParent));
-					}
-				else if(elementStoredNodeOffsetParent!=null)
-					{
-					if (elementStoredNodeOffsetParent.nodeName=="TD")
+					if (editor.selection.getContent().length==0)
 						{
-						if (elementStoredNodeOffsetParent.className.substring(0,17)=="calculatorTinyMCE")
-							{
-							toolbarIcon.active(true);
-							}
-							else
-							{
-							toolbarIcon.active(false);
-							}
 						getTextNodesValues(editor, getTextNodesValues(editor,elementStoredNodeOffsetParent.offsetParent));
-						}
-						else
-						{
-						toolbarIcon.active(false);
 						}
 					}
 					else
