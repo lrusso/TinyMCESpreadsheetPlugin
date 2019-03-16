@@ -94,13 +94,26 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 							resultNumber = splitter[1];
 							}
 						resultNumberFinal = parseFloat(resultNumber).toFixed(decimalsUsed);
-						result = replaceAll(result,resultNumber,resultNumberFinal);
 
-						parentElement.className = "spreadsheetTinyMCE" + decimalsUsed + encodeURIComponent(inputtedCalc);
-						parentElement.innerHTML = result;
-						if (setDirty==true)
+						if (isNaN(resultNumberFinal)===false)
 							{
-							editor.insertContent("");
+							result = replaceAll(result,resultNumber,resultNumberFinal);
+
+							parentElement.className = "spreadsheetTinyMCE" + decimalsUsed + encodeURIComponent(inputtedCalc);
+							parentElement.innerHTML = result;
+							if (setDirty==true)
+								{
+								editor.insertContent("");
+								}
+							}
+							else
+							{
+							parentElement.className = "spreadsheetTinyMCE" + decimalsUsed + encodeURIComponent(inputtedCalc);
+							parentElement.innerHTML = "Error";
+							if (setDirty==true)
+								{
+								editor.insertContent("");
+								}
 							}
 						}
 					}
