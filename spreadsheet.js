@@ -4,22 +4,25 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 
 	var STRING_MENU = "";
 	var STRING_TITLE = "";
+	var STRING_DECIMALS = "";
 	var STRING_ERROR = "";
 
 	if (editor.settings.language=="es")
 		{
 		STRING_MENU = "F\u00F3rmula";
 		STRING_TITLE = "Insertar/editar f\u00F3rmula";
+		STRING_DECIMALS = "Decimales";
 		STRING_ERROR = "ERROR: Debe estar posicionado dentro de una tabla.";
 		}
 		else
 		{
 		STRING_MENU = "Formula";
 		STRING_TITLE = "Insert/edit formula";
+		STRING_DECIMALS = "Decimals";
 		STRING_ERROR = "ERROR: You must be located inside a table.";
 		}
 
-	function updateField(inputtedCalc,parentElement,initialClass,setDirty)
+	function updateField(inputtedCalc,parentElement,initialClass,decimalsUsed,setDirty)
 		{
 		var tableAsArray = tableToArray(parentElement.offsetParent);
 		var inputtedCalcTemp = inputtedCalc;
@@ -68,7 +71,7 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 					var result = eval(inputtedCalcTemp);
 					if (typeof result === "undefined")
 						{
-						parentElement.className = "spreadsheetTinyMCE" + encodeURIComponent(inputtedCalc);
+						parentElement.className = "spreadsheetTinyMCE" + decimalsUsed + encodeURIComponent(inputtedCalc);
 						parentElement.innerHTML = "Error";
 						if (setDirty==true)
 							{
@@ -78,23 +81,21 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 						else
 						{
 						result = String(result);
-						if (result.indexOf(".")>-1)
+						var splitter = result.split(" ");
+						var resultNumber = "";
+						var resultNumberFinal = "";
+						if (isNumber(splitter[0])==true)
 							{
-							var splitter = result.split(" ");
-							var resultNumber = "";
-							if (isNumber(splitter[0])==true)
-								{
-								resultNumber = splitter[0];
-								}
-							else if (isNumber(splitter[1])==true)
-								{
-								resultNumber = splitter[1];
-								}
-
-							var resultNumberFinal = parseFloat(resultNumber).toFixed(2);
-							result = replaceAll(result,resultNumber,resultNumberFinal);
+							resultNumber = splitter[0];
 							}
-						parentElement.className = "spreadsheetTinyMCE" + encodeURIComponent(inputtedCalc);
+						else if (isNumber(splitter[1])==true)
+							{
+							resultNumber = splitter[1];
+							}
+						resultNumberFinal = parseFloat(resultNumber).toFixed(decimalsUsed);
+						result = replaceAll(result,resultNumber,resultNumberFinal);
+
+						parentElement.className = "spreadsheetTinyMCE" + decimalsUsed + encodeURIComponent(inputtedCalc);
 						parentElement.innerHTML = result;
 						if (setDirty==true)
 							{
@@ -104,7 +105,7 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 					}
 					catch(err)
 					{
-					parentElement.className = "spreadsheetTinyMCE" + encodeURIComponent(inputtedCalc);
+					parentElement.className = "spreadsheetTinyMCE" + decimalsUsed + encodeURIComponent(inputtedCalc);
 					parentElement.innerHTML = "Error";
 					if (setDirty==true)
 						{
@@ -114,7 +115,7 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 				}
 				else
 				{
-				parentElement.className = "spreadsheetTinyMCE" + encodeURIComponent(inputtedCalc);
+				parentElement.className = "spreadsheetTinyMCE" + decimalsUsed + encodeURIComponent(inputtedCalc);
 				parentElement.innerHTML = "Error";
 				if (setDirty==true)
 					{
@@ -290,8 +291,14 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 					{
 					var elementStoredClassName = node.className;
 					var tempValue = decodeURIComponent(elementStoredClassName);
-					var defaultCalc = tempValue.substring(18,tempValue.length);
-					updateField(defaultCalc,node,elementStoredClassName,false);
+					var decimalsUsed = "2";
+					var tempDecimals = tempValue.substring(18,19);
+					if (isNumber(tempDecimals))
+						{
+						decimalsUsed = tempDecimals;
+						}
+					var defaultCalc = tempValue.substring(19,tempValue.length);
+					updateField(defaultCalc,node,elementStoredClassName,decimalsUsed,false);
 					}
 
 				var el = node.childNodes[i];
@@ -333,6 +340,7 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 		var elementStoredNodeOffsetParent = editor.selection.getNode().offsetParent;
 		var elementStoredClassName = elementStoredNode.className;
 		var elementStoredNodeName = elementStoredNode.nodeName;
+		var decimalsUsed = "2";
 
 		var tableLocated = false;
 
@@ -359,7 +367,12 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 					if (elementStoredClassName.substring(0,18)=="spreadsheetTinyMCE")
 						{
 						var tempValue = decodeURIComponent(elementStoredClassName);
-						defaultCalc = tempValue.substring(18,tempValue.length);
+						var tempDecimals = tempValue.substring(18,19);
+						if (isNumber(tempDecimals))
+							{
+							decimalsUsed = tempDecimals;
+							}
+						defaultCalc = tempValue.substring(19,tempValue.length);
 						}
 					}
 					catch(err)
@@ -372,25 +385,53 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 				title: STRING_TITLE,
 				body:
 					{
-					type: "textbox",
-					name: "inputtedCalc",
-					spellcheck: false,
-					flex: 1,
-					size: 40,
-					style: "direction: ltr; text-align: left",
-					classes: "monospace",
-					value: defaultCalc,
-					autofocus: true
+					type: "form",
+					layout: "grid",
+					columns: 1,
+					padding: 0,
+					items:
+						[
+							{
+							type: "textbox",
+							name: "inputtedCalc",
+							spellcheck: false,
+							flex: 1,
+							size: 40,
+							style: "direction: ltr; text-align: left",
+							classes: "monospace",
+							value: defaultCalc,
+							autofocus: true
+							},
+							{
+							type: "listbox",
+							label: STRING_DECIMALS,
+							name: "decimals",
+							value: decimalsUsed,
+							values:
+								[
+									{text: "0", value: "0"},
+									{text: "1", value: "1"},
+									{text: "2", value: "2"},
+									{text: "3", value: "3"},
+									{text: "4", value: "4"},
+									{text: "5", value: "5"},
+									{text: "6", value: "6"},
+									{text: "7", value: "7"},
+									{text: "8", value: "8"},
+									{text: "9", value: "9"}
+								]
+							}
+						]
 					},
 				onsubmit: function(e)
 					{
 					if (elementStoredNodeName=="TD")
 						{
-						updateField(e.data.inputtedCalc,elementStoredNode,elementStoredClassName,true);
+						updateField(e.data.inputtedCalc,elementStoredNode,elementStoredClassName,e.data.decimals,true);
 						}
 					else if(elementStoredNodeOffsetParent.nodeName=="TD")
 						{
-						updateField(e.data.inputtedCalc,elementStoredNodeOffsetParent,elementStoredClassName,true);
+						updateField(e.data.inputtedCalc,elementStoredNodeOffsetParent,elementStoredClassName,e.data.decimals,true);
 						}
 					}
 				});
