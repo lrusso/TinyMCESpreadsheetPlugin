@@ -55,6 +55,7 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 					{
 					cellValueNumber = 0;
 					}
+				cellValueNumber = "(" + cellValueNumber + ")";
 				inputtedCalcTemp = replaceAll(inputtedCalcTemp,location,cellValueNumber);
 				}
 				catch(err)
@@ -325,6 +326,7 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 				character!="7" &&
 				character!="8" &&
 				character!="9" &&
+				character!="-" &&
 				character!="."
 				)
 				{
