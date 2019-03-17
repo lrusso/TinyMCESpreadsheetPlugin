@@ -57,17 +57,35 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 					else
 					{
 					var pattern3 = /[0-9-]*[{0,1}[\d]*[\.]{0,1}[\d]+/gm;
-					var match3 = pattern3.exec(cellValue);
+					var match3;
+					var counter = 0;
+
 					var cellValueNumber = "0";
-					if (match3[0]!=null)
+					while (match3 = pattern3.exec(cellValue))
 						{
-						var cellValueNumber = match3[0];
-						cellValueNumber = replaceAll(cellValueNumber,",","");
-						cellValueNumber = parseFloat(cellValueNumber).toFixed(2);
+						counter = counter +1;
+
+						if (counter==1)
+							{
+							if (match3[0]!=null)
+								{
+								cellValueNumber = match3[0];
+								cellValueNumber = replaceAll(cellValueNumber,",","");
+								cellValueNumber = parseFloat(cellValueNumber).toFixed(2);
+								}
+							}
 						}
+
 					cellValueNumber = "(" + cellValueNumber + ")";
 
-					inputtedCalcTemp = replaceAll(inputtedCalcTemp,location,cellValueNumber);
+					if (counter==1 || cellValue=="")
+						{
+						inputtedCalcTemp = replaceAll(inputtedCalcTemp,location,cellValueNumber);
+						}
+						else
+						{
+						inputtedCalcTemp = "Error";
+						}
 					}
 				}
 				catch(err)
