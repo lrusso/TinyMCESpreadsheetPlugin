@@ -39,24 +39,32 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 				var column = getColumnNumber(match2[1]) - 1;
 				var row = match2[2] - 1;
 				var cellObject = tableAsArray[row][column];
+				var cellClass = cellObject.className;
 				var cellValue = cellObject.textContent;
-				cellValue = cellValue.trim();
-				var cellValueNumber = "";
-				var splitter = cellValue.split(" ");
-				if (isNumber(splitter[0])==true)
+				if (cellClass===initialClass)
 					{
-					cellValueNumber = splitter[0];
+					inputtedCalcTemp = replaceAll(inputtedCalcTemp,location,"(0)");
 					}
-				else if (isNumber(splitter[1])==true)
+					else
 					{
-					cellValueNumber = splitter[1];
+					cellValue = cellValue.trim();
+					var cellValueNumber = "";
+					var splitter = cellValue.split(" ");
+					if (isNumber(splitter[0])==true)
+						{
+						cellValueNumber = splitter[0];
+						}
+					else if (isNumber(splitter[1])==true)
+						{
+						cellValueNumber = splitter[1];
+						}
+					if (cellValue=="")
+						{
+						cellValueNumber = 0;
+						}
+					cellValueNumber = "(" + cellValueNumber + ")";
+					inputtedCalcTemp = replaceAll(inputtedCalcTemp,location,cellValueNumber);
 					}
-				if (cellValue=="")
-					{
-					cellValueNumber = 0;
-					}
-				cellValueNumber = "(" + cellValueNumber + ")";
-				inputtedCalcTemp = replaceAll(inputtedCalcTemp,location,cellValueNumber);
 				}
 				catch(err)
 				{
