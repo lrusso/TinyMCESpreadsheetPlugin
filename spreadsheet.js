@@ -56,8 +56,8 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 					}
 					else
 					{
-					var pattern3 = /[0-9-][{0,1}[\d]*[\.][\.]{0,1}[\d]+/gm;
-					var match3 = pattern3.exec(cellValue)
+					var pattern3 = /[0-9-]*[{0,1}[\d]*[\.]{0,1}[\d]+/gm;
+					var match3 = pattern3.exec(cellValue);
 					var cellValueNumber = "0";
 					if (match3[0]!=null)
 						{
@@ -95,7 +95,7 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 						{
 						result = String(result);
 
-						var pattern3 = /[0-9-][{0,1}[\d]*[\.][\.]{0,1}[\d]+/gm;
+						var pattern3 = /[0-9-]*[{0,1}[\d]*[\.]{0,1}[\d]+/gm;
 						var match3 = pattern3.exec(result);
 						var resultNumber = match3[0];
 
