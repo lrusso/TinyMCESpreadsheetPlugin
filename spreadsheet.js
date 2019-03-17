@@ -5,29 +5,38 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 	var STRING_MENU = "";
 	var STRING_TITLE = "";
 	var STRING_DECIMALS = "";
+	var STRING_THOUSANDS = "";
 	var STRING_ERROR = "";
 
 	if (editor.settings.language=="es")
 		{
 		STRING_MENU = "F\u00F3rmula";
 		STRING_TITLE = "Insertar/editar f\u00F3rmula";
-		STRING_DECIMALS = "Decimales";
+		STRING_DECIMALS = "Mostrar decimales";
+		STRING_THOUSANDS = "Separador de miles";
 		STRING_ERROR = "ERROR: Debe estar posicionado dentro de una tabla.";
 		}
 		else
 		{
 		STRING_MENU = "Formula";
 		STRING_TITLE = "Insert/edit formula";
-		STRING_DECIMALS = "Decimals";
+		STRING_DECIMALS = "Show decimals";
+		STRING_THOUSANDS = "Thousands separator";
 		STRING_ERROR = "ERROR: You must be located inside a table.";
 		}
 
-	function updateField(inputtedCalc,parentElement,initialClass,decimalsUsed,setDirty)
+	function updateField(inputtedCalc,parentElement,initialClass,decimalsUsed,thousandsSeparatorValue,setDirty)
 		{
 		var tableAsArray = tableToArray(parentElement.offsetParent);
 		var inputtedCalcTemp = inputtedCalc;
 		var pattern = /[A-Z]{1}\d+/gm;
 		var match;
+
+		var thousandsSeparator = "0";
+		if (thousandsSeparatorValue==true)
+			{
+			thousandsSeparator="1";
+			}
 
 		while (match = pattern.exec(inputtedCalcTemp))
 			{
@@ -80,7 +89,7 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 					var result = eval(inputtedCalcTemp);
 					if (typeof result === "undefined")
 						{
-						parentElement.className = "spreadsheetTinyMCE" + decimalsUsed + encodeURIComponent(inputtedCalc);
+						parentElement.className = "spreadsheetTinyMCE" + decimalsUsed + "" +  thousandsSeparator + encodeURIComponent(inputtedCalc);
 						parentElement.innerHTML = "Error";
 						if (setDirty==true)
 							{
@@ -105,9 +114,13 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 
 						if (isNaN(resultNumberFinal)===false)
 							{
+							if (thousandsSeparator=="1")
+								{
+								resultNumberFinal = formatNumber(resultNumberFinal);
+								}
 							result = replaceAll(result,resultNumber,resultNumberFinal);
 
-							parentElement.className = "spreadsheetTinyMCE" + decimalsUsed + encodeURIComponent(inputtedCalc);
+							parentElement.className = "spreadsheetTinyMCE" + decimalsUsed + "" +  thousandsSeparator + encodeURIComponent(inputtedCalc);
 							parentElement.innerHTML = result;
 							if (setDirty==true)
 								{
@@ -116,7 +129,7 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 							}
 							else
 							{
-							parentElement.className = "spreadsheetTinyMCE" + decimalsUsed + encodeURIComponent(inputtedCalc);
+							parentElement.className = "spreadsheetTinyMCE" + decimalsUsed + "" +  thousandsSeparator + encodeURIComponent(inputtedCalc);
 							parentElement.innerHTML = "Error";
 							if (setDirty==true)
 								{
@@ -127,7 +140,7 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 					}
 					catch(err)
 					{
-					parentElement.className = "spreadsheetTinyMCE" + decimalsUsed + encodeURIComponent(inputtedCalc);
+					parentElement.className = "spreadsheetTinyMCE" + decimalsUsed + "" +  thousandsSeparator + encodeURIComponent(inputtedCalc);
 					parentElement.innerHTML = "Error";
 					if (setDirty==true)
 						{
@@ -137,7 +150,7 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 				}
 				else
 				{
-				parentElement.className = "spreadsheetTinyMCE" + decimalsUsed + encodeURIComponent(inputtedCalc);
+				parentElement.className = "spreadsheetTinyMCE" + decimalsUsed + "" +  thousandsSeparator + encodeURIComponent(inputtedCalc);
 				parentElement.innerHTML = "Error";
 				if (setDirty==true)
 					{
@@ -215,6 +228,11 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 		return str.replace(new RegExp(find, "g"), replace);
 		}
 
+	function formatNumber (num)
+		{
+		return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
+		}
+
 	function checkingErrors(input)
 		{
 		for(var i = 0; i < input.length; i++)
@@ -249,7 +267,7 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 		return false;
 		}
 
-	function updateTable()
+	function updateTable(revalidate)
 		{
 		try
 			{
@@ -265,9 +283,12 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 					{
 					toolbarIcon.active(false);
 					}
-				if (editor.selection.getContent().length==0)
+				if (revalidate==true)
 					{
-					getTextNodesValues(editor, getTextNodesValues(editor,elementStoredNode.offsetParent));
+					if (editor.selection.getContent().length==0)
+						{
+						getTextNodesValues(editor, getTextNodesValues(editor,elementStoredNode.offsetParent));
+						}
 					}
 				}
 			else if(elementStoredNodeOffsetParent!=null)
@@ -282,9 +303,12 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 						{
 						toolbarIcon.active(false);
 						}
-					if (editor.selection.getContent().length==0)
+					if (revalidate==true)
 						{
-						getTextNodesValues(editor, getTextNodesValues(editor,elementStoredNodeOffsetParent.offsetParent));
+						if (editor.selection.getContent().length==0)
+							{
+							getTextNodesValues(editor, getTextNodesValues(editor,elementStoredNodeOffsetParent.offsetParent));
+							}
 						}
 					}
 					else
@@ -312,15 +336,28 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 				if (node.className.substring(0,18)=="spreadsheetTinyMCE")
 					{
 					var elementStoredClassName = node.className;
-					var tempValue = decodeURIComponent(elementStoredClassName);
 					var decimalsUsed = "2";
+					var thousandsSeparator = "0";
+
+					var tempValue = decodeURIComponent(elementStoredClassName);
+
 					var tempDecimals = tempValue.substring(18,19);
 					if (isNumber(tempDecimals))
 						{
 						decimalsUsed = tempDecimals;
 						}
-					var defaultCalc = tempValue.substring(19,tempValue.length);
-					updateField(defaultCalc,node,elementStoredClassName,decimalsUsed,false);
+
+					var tempSeparator = tempValue.substring(19,20);
+					if (isNumber(tempSeparator))
+						{
+						if (tempSeparator=="1")
+							{
+							thousandsSeparator = "1";
+							}
+						}
+
+					var defaultCalc = tempValue.substring(20,tempValue.length);
+					updateField(defaultCalc,node,elementStoredClassName,decimalsUsed,thousandsSeparator,false);
 					}
 
 				var el = node.childNodes[i];
@@ -364,6 +401,7 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 		var elementStoredClassName = elementStoredNode.className;
 		var elementStoredNodeName = elementStoredNode.nodeName;
 		var decimalsUsed = "2";
+		var thousandsSeparator = false;
 
 		var tableLocated = false;
 
@@ -390,12 +428,23 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 					if (elementStoredClassName.substring(0,18)=="spreadsheetTinyMCE")
 						{
 						var tempValue = decodeURIComponent(elementStoredClassName);
+
 						var tempDecimals = tempValue.substring(18,19);
 						if (isNumber(tempDecimals))
 							{
 							decimalsUsed = tempDecimals;
 							}
-						defaultCalc = tempValue.substring(19,tempValue.length);
+
+						var tempSeparator = tempValue.substring(19,20);
+						if (isNumber(tempSeparator))
+							{
+							if (tempSeparator=="1")
+								{
+								thousandsSeparator = true;
+								}
+							}
+
+						defaultCalc = tempValue.substring(20,tempValue.length);
 						}
 					}
 					catch(err)
@@ -443,6 +492,12 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 									{text: "8", value: "8"},
 									{text: "9", value: "9"}
 								]
+							},
+							{
+							type: "checkbox",
+							label: STRING_THOUSANDS,
+							name: "thousandsSeparator",
+							checked: thousandsSeparator
 							}
 						]
 					},
@@ -450,11 +505,11 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 					{
 					if (elementStoredNodeName=="TD")
 						{
-						updateField(e.data.inputtedCalc,elementStoredNode,elementStoredClassName,e.data.decimals,true);
+						updateField(e.data.inputtedCalc,elementStoredNode,elementStoredClassName,e.data.decimals,e.data.thousandsSeparator, true);
 						}
 					else if(elementStoredNodeOffsetParent.nodeName=="TD")
 						{
-						updateField(e.data.inputtedCalc,elementStoredNodeOffsetParent,elementStoredClassName,e.data.decimals,true);
+						updateField(e.data.inputtedCalc,elementStoredNodeOffsetParent,elementStoredClassName,e.data.decimals,e.data.thousandsSeparator,true);
 						}
 					}
 				});
@@ -467,12 +522,17 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 
 	editor.on("nodechange", function(e)
 		{
-		updateTable();
+		updateTable(false);
+		});
+
+	editor.on("change", function(e)
+		{
+		updateTable(true);
 		});
 
 	editor.on("paste", function(e)
 		{
-		updateTable();
+		updateTable(true);
 		});
 
 	editor.on("keyup", function(e)
@@ -481,7 +541,7 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 			{
 			if (e.keyCode!=37 && e.keyCode!=38 && e.keyCode!=37 && e.keyCode!=39 && e.keyCode!=40)
 				{
-				updateTable();
+				updateTable(true);
 				}
 			}
 		});
