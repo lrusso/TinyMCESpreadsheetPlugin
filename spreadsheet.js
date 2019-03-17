@@ -79,42 +79,10 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 			{
 			try
 				{
-				var result = eval(inputtedCalcTemp);
-				if (typeof result === "undefined")
+				if (inputtedCalcTemp.toLowerCase().indexOf("alert(")==-1 && inputtedCalcTemp.toLowerCase().indexOf("document.")==-1 && inputtedCalcTemp.toLowerCase().indexOf("window.")==-1)
 					{
-					parentElement.className = "spreadsheetTinyMCE" + decimalsUsed + "" +  thousandsSeparator + encodeURIComponent(inputtedCalc);
-					parentElement.innerHTML = "Error";
-					if (setDirty==true)
-						{
-						editor.insertContent("");
-						}
-					}
-					else
-					{
-					result = String(result);
-
-					var pattern3 = /[0-9-][{0,1}[\d]*[\.][\.]{0,1}[\d]+/gm;
-					var match3 = pattern3.exec(result);
-					var resultNumber = match3[0];
-
-					resultNumberFinal = parseFloat(resultNumber).toFixed(decimalsUsed);
-
-					if (isNaN(resultNumberFinal)===false)
-						{
-						if (thousandsSeparator=="1")
-							{
-							resultNumberFinal = formatNumber(resultNumberFinal);
-							}
-						result = replaceAll(result,resultNumber,resultNumberFinal);
-
-						parentElement.className = "spreadsheetTinyMCE" + decimalsUsed + "" +  thousandsSeparator + encodeURIComponent(inputtedCalc);
-						parentElement.innerHTML = result;
-						if (setDirty==true)
-							{
-							editor.insertContent("");
-							}
-						}
-						else
+					var result = eval(inputtedCalcTemp);
+					if (typeof result === "undefined")
 						{
 						parentElement.className = "spreadsheetTinyMCE" + decimalsUsed + "" +  thousandsSeparator + encodeURIComponent(inputtedCalc);
 						parentElement.innerHTML = "Error";
@@ -122,6 +90,50 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 							{
 							editor.insertContent("");
 							}
+						}
+						else
+						{
+						result = String(result);
+
+						var pattern3 = /[0-9-][{0,1}[\d]*[\.][\.]{0,1}[\d]+/gm;
+						var match3 = pattern3.exec(result);
+						var resultNumber = match3[0];
+
+						resultNumberFinal = parseFloat(resultNumber).toFixed(decimalsUsed);
+
+						if (isNaN(resultNumberFinal)===false)
+							{
+							if (thousandsSeparator=="1")
+								{
+								resultNumberFinal = formatNumber(resultNumberFinal);
+								}
+							result = replaceAll(result,resultNumber,resultNumberFinal);
+
+							parentElement.className = "spreadsheetTinyMCE" + decimalsUsed + "" +  thousandsSeparator + encodeURIComponent(inputtedCalc);
+							parentElement.innerHTML = result;
+							if (setDirty==true)
+								{
+								editor.insertContent("");
+								}
+							}
+							else
+							{
+							parentElement.className = "spreadsheetTinyMCE" + decimalsUsed + "" +  thousandsSeparator + encodeURIComponent(inputtedCalc);
+							parentElement.innerHTML = "Error";
+							if (setDirty==true)
+								{
+								editor.insertContent("");
+								}
+							}
+						}
+					}
+					else
+					{
+					parentElement.className = "spreadsheetTinyMCE" + decimalsUsed + "" +  thousandsSeparator + encodeURIComponent(inputtedCalc);
+					parentElement.innerHTML = "Error";
+					if (setDirty==true)
+						{
+						editor.insertContent("");
 						}
 					}
 				}
