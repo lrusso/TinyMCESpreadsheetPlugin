@@ -215,12 +215,12 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 
 	function formatNumber (num)
 		{
-		var numberFinal = num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
-		var numberDotLocation = numberFinal.indexOf(".");
-		var numberAfterDot = numberFinal.substring(numberDotLocation,numberFinal.length);
-		var numberAfterDotCleaned = replaceAll(numberAfterDot,",","");
-		numberFinal = replaceAll(numberFinal,numberAfterDot,numberAfterDotCleaned);
-		return numberFinal;
+		var str = num.toString().split(".");
+		if (str[0].length >= 3)
+			{
+			str[0] = str[0].replace(/(\d)(?=(\d{3})+$)/g, "$1,");
+			}
+		return str.join(".");
 		}
 
 	function showError(className,parentElement,setDirty)
