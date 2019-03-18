@@ -353,7 +353,7 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 
 		if (elementStoredNodeName=="TD")
 			{
-			tableLocated = true
+			tableLocated = true;
 			elementStoredClassName = elementStoredNode.className;
 			}
 		else if(elementStoredNodeOffsetParent!=null)
