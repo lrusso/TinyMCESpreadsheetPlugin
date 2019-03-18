@@ -102,12 +102,7 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 					var result = eval(inputtedCalcTemp);
 					if (typeof result === "undefined")
 						{
-						parentElement.className = "spreadsheetTinyMCE" + decimalsUsed + "" +  thousandsSeparator + encodeURIComponent(inputtedCalc);
-						parentElement.innerHTML = "Error";
-						if (setDirty==true)
-							{
-							editor.insertContent("");
-							}
+						showError("spreadsheetTinyMCE" + decimalsUsed + "" +  thousandsSeparator + encodeURIComponent(inputtedCalc),parentElement,setDirty);
 						}
 						else
 						{
@@ -136,33 +131,18 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 							}
 							else
 							{
-							parentElement.className = "spreadsheetTinyMCE" + decimalsUsed + "" +  thousandsSeparator + encodeURIComponent(inputtedCalc);
-							parentElement.innerHTML = "Error";
-							if (setDirty==true)
-								{
-								editor.insertContent("");
-								}
+							showError("spreadsheetTinyMCE" + decimalsUsed + "" +  thousandsSeparator + encodeURIComponent(inputtedCalc),parentElement,setDirty);
 							}
 						}
 					}
 					else
 					{
-					parentElement.className = "spreadsheetTinyMCE" + decimalsUsed + "" +  thousandsSeparator + encodeURIComponent(inputtedCalc);
-					parentElement.innerHTML = "Error";
-					if (setDirty==true)
-						{
-						editor.insertContent("");
-						}
+					showError("spreadsheetTinyMCE" + decimalsUsed + "" +  thousandsSeparator + encodeURIComponent(inputtedCalc),parentElement,setDirty);
 					}
 				}
 				catch(err)
 				{
-				parentElement.className = "spreadsheetTinyMCE" + decimalsUsed + "" +  thousandsSeparator + encodeURIComponent(inputtedCalc);
-				parentElement.innerHTML = "Error";
-				if (setDirty==true)
-					{
-					editor.insertContent("");
-					}
+				showError("spreadsheetTinyMCE" + decimalsUsed + "" +  thousandsSeparator + encodeURIComponent(inputtedCalc),parentElement,setDirty);
 				}
 			}
 			else
@@ -238,6 +218,16 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 	function formatNumber (num)
 		{
 		return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
+		}
+
+	function showError(className,parentElement,setDirty)
+		{
+		parentElement.className = className;
+		parentElement.innerHTML = "Error";
+		if (setDirty==true)
+			{
+			editor.insertContent("");
+			}
 		}
 
 	function updateTable(revalidate)
