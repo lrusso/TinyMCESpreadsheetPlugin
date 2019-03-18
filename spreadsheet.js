@@ -102,12 +102,7 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 					var result = eval(inputtedCalcTemp);
 					if (typeof result === "undefined")
 						{
-						parentElement.className = "spreadsheetTinyMCE" + decimalsUsed + "" +  thousandsSeparator + encodeURIComponent(inputtedCalc);
-						parentElement.innerHTML = "Error";
-						if (setDirty==true)
-							{
-							editor.insertContent("");
-							}
+						showError("spreadsheetTinyMCE" + decimalsUsed + "" +  thousandsSeparator + encodeURIComponent(inputtedCalc),parentElement,setDirty);
 						}
 						else
 						{
@@ -128,14 +123,7 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 							result = replaceAll(result,resultNumber,resultNumberFinal);
 							parentElement.className = "spreadsheetTinyMCE" + decimalsUsed + "" +  thousandsSeparator + encodeURIComponent(inputtedCalc);
 
-							var latestChildNode = parentElement;
-							while (latestChildNode.lastChild!=null)
-								{
-								latestChildNode = latestChildNode.lastChild;
-								}
-
-							try{latestChildNode.innerHTML = result;}catch(err){}
-							try{latestChildNode.textContent = result;}catch(err){}
+							updateCell(parentElement,result);
 
 							if (setDirty==true)
 								{
@@ -144,33 +132,18 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 							}
 							else
 							{
-							parentElement.className = "spreadsheetTinyMCE" + decimalsUsed + "" +  thousandsSeparator + encodeURIComponent(inputtedCalc);
-							parentElement.innerHTML = "Error";
-							if (setDirty==true)
-								{
-								editor.insertContent("");
-								}
+							showError("spreadsheetTinyMCE" + decimalsUsed + "" +  thousandsSeparator + encodeURIComponent(inputtedCalc),parentElement,setDirty);
 							}
 						}
 					}
 					else
 					{
-					parentElement.className = "spreadsheetTinyMCE" + decimalsUsed + "" +  thousandsSeparator + encodeURIComponent(inputtedCalc);
-					parentElement.innerHTML = "Error";
-					if (setDirty==true)
-						{
-						editor.insertContent("");
-						}
+					showError("spreadsheetTinyMCE" + decimalsUsed + "" +  thousandsSeparator + encodeURIComponent(inputtedCalc),parentElement,setDirty);
 					}
 				}
 				catch(err)
 				{
-				parentElement.className = "spreadsheetTinyMCE" + decimalsUsed + "" +  thousandsSeparator + encodeURIComponent(inputtedCalc);
-				parentElement.innerHTML = "Error";
-				if (setDirty==true)
-					{
-					editor.insertContent("");
-					}
+				showError("spreadsheetTinyMCE" + decimalsUsed + "" +  thousandsSeparator + encodeURIComponent(inputtedCalc),parentElement,setDirty);
 				}
 			}
 			else
@@ -246,6 +219,31 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 	function formatNumber (num)
 		{
 		return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
+		}
+
+	function showError(className,parentElement,setDirty)
+		{
+		parentElement.className = className;
+
+		updateCell(parentElement,"Error");
+
+		if (setDirty==true)
+			{
+			editor.insertContent("");
+			}
+		}
+
+	function updateCell(parentElement,value)
+		{
+		var latestChildNode = parentElement;
+
+		while (latestChildNode.lastChild!=null)
+			{
+			latestChildNode = latestChildNode.lastChild;
+			}
+
+		try{latestChildNode.innerHTML = value;}catch(err){}
+		try{latestChildNode.textContent = value;}catch(err){}
 		}
 
 	function updateTable(revalidate)
