@@ -211,9 +211,9 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 					else
 					{
 					var finalResult = 0;
-					for (i=rowStart;i<=rowEnd;i++)
+					for (var i = rowStart; i <= rowEnd; i++)
 						{
-						for (j=columnStart;j<=columnEnd;j++)
+						for (var j = columnStart; j <= columnEnd; j++)
 							{
 							var cellValue = getCellValue(tableAsArray,i,j,initialClass);
 							if (cellValue=="Error")
@@ -378,7 +378,7 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 		{
 		if (typeof node != "undefined")
 			{
-			for (var i=0; i<node.childNodes.length; i++)
+			for (var i = 0; i < node.childNodes.length; i++)
 				{
 				if (node.className.substring(0,18)=="spreadsheetTinyMCE")
 					{
