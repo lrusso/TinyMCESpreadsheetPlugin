@@ -10,10 +10,16 @@ Operators + - * / % ( ) and cells references are allowed.
 
 https://lrusso.github.io/TinyMCESpreadsheetPlugin/demo.htm
 
-## Example of formula:
+## Example of a formula with cell references:
 
 ```
 "$ "+((B2+B3+B4)/B5)
+```
+
+## Example of a formula with range cell references:
+
+```
+"$ "+((B2:B4)/B5)
 ```
 
 ## How to add it to TinyMCE
