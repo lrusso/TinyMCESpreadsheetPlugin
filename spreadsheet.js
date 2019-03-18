@@ -28,68 +28,14 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 		{
 		var tableAsArray = tableToArray(parentElement.offsetParent);
 		var inputtedCalcTemp = inputtedCalc;
-		var pattern = /[A-Z]{1}\d+/gm;
-		var match;
-
 		var thousandsSeparator = "0";
 		if (thousandsSeparatorValue==true)
 			{
 			thousandsSeparator="1";
 			}
 
-		while (match = pattern.exec(inputtedCalcTemp))
-			{
-			try
-				{
-				var location = match[0];
-				var pattern2 = /([a-zA-Z]*)([0-9]*)/;
-				var match2 = pattern2.exec(location);
-				var column = getColumnNumber(match2[1]) - 1;
-				var row = match2[2] - 1;
-				var cellObject = tableAsArray[row][column];
-				var cellClass = cellObject.className;
-				var cellValue = cellObject.textContent;
-				if (cellClass===initialClass)
-					{
-					inputtedCalcTemp = replaceAll(inputtedCalcTemp,location,"(0)");
-					}
-					else
-					{
-					var pattern3 = /[0-9-]*[{0,1}[\d]*[\.]{0,1}[\d]+/gm;
-					var match3;
-					var counter = 0;
-
-					var cellValueNumber = "0";
-					while (match3 = pattern3.exec(cellValue))
-						{
-						counter = counter +1;
-
-						if (counter==1)
-							{
-							if (match3[0]!=null)
-								{
-								cellValueNumber = match3[0];
-								cellValueNumber = replaceAll(cellValueNumber,",","");
-								cellValueNumber = parseFloat(cellValueNumber).toFixed(2);
-								}
-							}
-						}
-					cellValueNumber = "(" + cellValueNumber + ")";
-
-					if (counter==1 || cellValue=="")
-						{
-						inputtedCalcTemp = replaceAll(inputtedCalcTemp,location,cellValueNumber);
-						}
-						else
-						{
-						inputtedCalcTemp = "Error";
-						}
-					}
-				}
-				catch(err)
-				{
-				}
-			}
+		inputtedCalcTemp = replaceRangeCellsReferences(inputtedCalcTemp,tableAsArray,initialClass);
+		inputtedCalcTemp = replaceSingleCellsReferences(inputtedCalcTemp,tableAsArray,initialClass);
 
 		if (inputtedCalcTemp!="")
 			{
@@ -98,6 +44,7 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 				if (inputtedCalcTemp.toLowerCase().indexOf("alert(")==-1 && inputtedCalcTemp.toLowerCase().indexOf("document.")==-1 && inputtedCalcTemp.toLowerCase().indexOf("window.")==-1)
 					{
 					var result = eval(inputtedCalcTemp);
+
 					if (typeof result === "undefined")
 						{
 						updateCell("Error", decimalsUsed + "" +  thousandsSeparator + encodeURIComponent(inputtedCalc),parentElement,setDirty);
@@ -106,9 +53,9 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 						{
 						result = String(result);
 
-						var pattern3 = /[0-9-]*[{0,1}[\d]*[\.]{0,1}[\d]+/gm;
-						var match3 = pattern3.exec(result);
-						var resultNumber = match3[0];
+						var pattern = /[0-9-]*[{0,1}[\d]*[\.]{0,1}[\d]+/gm;
+						var match = pattern.exec(result);
+						var resultNumber = match[0];
 						var resultNumberFinal = parseFloat(resultNumber).toFixed(decimalsUsed);
 
 						if (isNaN(resultNumberFinal)===false)
@@ -217,6 +164,103 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 		return str.join(".");
 		}
 
+	function replaceRangeCellsReferences(inputtedCalcTemp,tableAsArray,initialClass)
+		{
+		var pattern = /[A-Z]{1}.:[A-Z]{1}\d+/gm;
+		var match;
+		while (match = pattern.exec(inputtedCalcTemp))
+			{
+			try
+				{
+				var location = match[0];
+				var pattern2 = /[A-Z]{1}\d+/gm;
+				var match2;
+
+				var rangeFrom = null;
+				var rangeTo = null;
+				var columnNumber = null;
+				var rowStart = null;
+				var rowEnd = null;
+
+				while (match2 = pattern2.exec(location))
+					{
+					if (rangeFrom==null)
+						{
+						rangeFrom= match2[0];
+						}
+					else if (rangeTo==null)
+						{
+						rangeTo = match2[0];
+						}
+					}
+
+				var pattern3 = /([a-zA-Z]*)([0-9]*)/;
+				var match3 = pattern3.exec(rangeFrom);
+				var columnNumber = getColumnNumber(match3[1]) - 1;
+				var rowStart = match3[2] - 1;
+
+				var match4 = pattern3.exec(rangeTo);
+				var rowEnd = match4[2] - 1;
+
+				var finalResult = 0;
+
+				for (i=rowStart;i<=rowEnd;i++)
+					{
+					var cellValue = getCellValue(tableAsArray,i,columnNumber,initialClass);
+					if (cellValue=="Error")
+						{
+						finalResult = "Error";
+						}
+						else
+						{
+						finalResult = finalResult + "+" + cellValue;
+						}
+					}
+
+				finalResult = eval(finalResult);
+
+				inputtedCalcTemp = replaceAll(inputtedCalcTemp,location,finalResult);
+
+				return inputtedCalcTemp;
+				}
+				catch(err)
+				{
+				}
+			}
+		return inputtedCalcTemp;
+		}
+
+	function replaceSingleCellsReferences(inputtedCalcTemp,tableAsArray,initialClass)
+		{
+		var pattern = /[A-Z]{1}\d+/gm;
+		var match;
+		while (match = pattern.exec(inputtedCalcTemp))
+			{
+			try
+				{
+				var location = match[0];
+				var pattern2 = /([a-zA-Z]*)([0-9]*)/;
+				var match2 = pattern2.exec(location);
+				var column = getColumnNumber(match2[1]) - 1;
+				var row = match2[2] - 1;
+
+				var cellValue = getCellValue(tableAsArray,row,column,initialClass);
+				if (cellValue=="Error")
+					{
+					inputtedCalcTemp = "Error";
+					}
+					else
+					{
+					inputtedCalcTemp = replaceAll(inputtedCalcTemp,location,cellValue);
+					}
+				}
+				catch(err)
+				{
+				}
+			}
+		return inputtedCalcTemp;
+		}
+
 	function updateCell(value, className,parentElement,setDirty)
 		{
 		parentElement.className = "spreadsheetTinyMCE" + className;
@@ -231,6 +275,46 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 			{
 			editor.insertContent("");
 			}
+		}
+
+	function getCellValue(tableAsArray,row,column,initialClass)
+		{
+		var cellObject = tableAsArray[row][column];
+		var cellClass = cellObject.className;
+		var cellValue = cellObject.textContent;
+		if (cellClass===initialClass)
+			{
+			return "Error";
+			}
+			else
+			{
+			var pattern = /[0-9-]*[{0,1}[\d]*[\.]{0,1}[\d]+/gm;
+			var match;
+			var counter = 0;
+
+			var cellValueNumber = "0";
+			while (match = pattern.exec(cellValue))
+				{
+				counter = counter +1;
+				if (counter==1)
+					{
+					if (match[0]!=null)
+						{
+						cellValueNumber = match[0];
+						cellValueNumber = replaceAll(cellValueNumber,",","");
+						cellValueNumber = parseFloat(cellValueNumber).toFixed(2);
+						}
+					}
+				}
+			cellValueNumber = "(" + cellValueNumber + ")";
+
+			if (counter==1 || cellValue=="")
+				{
+				return cellValueNumber;
+				}
+			}
+
+		return "Error";
 		}
 
 	function updateTable(revalidate)
