@@ -19,6 +19,7 @@ https://lrusso.github.io/TinyMCESpreadsheetPlugin/demo.htm
 | (A1+A2+A3)+100 | Cell referenced formula with additional math |
 | "$ "+((A1+A2+A3)+100) | Cell referenced formula with additional math and text |
 | "$ "+((A1:A3)+100) | Cell range formula with additional math and text |
+| "$ "+((A1:B3)+100) | Cell range formula with additional math and text |
 
 ## How to add it to TinyMCE
 
