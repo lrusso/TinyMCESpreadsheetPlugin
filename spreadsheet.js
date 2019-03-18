@@ -178,7 +178,8 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 
 				var rangeFrom = null;
 				var rangeTo = null;
-				var columnNumber = null;
+				var columnStart = null;
+				var columnEnd = null;
 				var rowStart = null;
 				var rowEnd = null;
 
@@ -196,30 +197,38 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 
 				var pattern3 = /([a-zA-Z]*)([0-9]*)/;
 				var match3 = pattern3.exec(rangeFrom);
-				var columnNumber = getColumnNumber(match3[1]) - 1;
-				var rowStart = match3[2] - 1;
+				columnStart = getColumnNumber(match3[1]) - 1;
+				rowStart = match3[2] - 1;
 
 				var match4 = pattern3.exec(rangeTo);
-				var rowEnd = match4[2] - 1;
+				columnEnd = getColumnNumber(match4[1]) - 1;
+				rowEnd = match4[2] - 1;
 
-				var finalResult = 0;
-
-				for (i=rowStart;i<=rowEnd;i++)
+				if (columnStart>columnEnd)
 					{
-					var cellValue = getCellValue(tableAsArray,i,columnNumber,initialClass);
-					if (cellValue=="Error")
-						{
-						finalResult = "Error";
-						}
-						else
-						{
-						finalResult = finalResult + "+" + cellValue;
-						}
+					inputtedCalcTemp = replaceAll(inputtedCalcTemp,location,"Error");
 					}
-
-				finalResult = eval(finalResult);
-
-				inputtedCalcTemp = replaceAll(inputtedCalcTemp,location,finalResult);
+					else
+					{
+					var finalResult = 0;
+					for (i=rowStart;i<=rowEnd;i++)
+						{
+						for (j=columnStart;j<=columnEnd;j++)
+							{
+							var cellValue = getCellValue(tableAsArray,i,j,initialClass);
+							if (cellValue=="Error")
+								{
+								finalResult = "Error";
+								}
+								else
+								{
+								finalResult = finalResult + "+" + cellValue;
+								}
+							}
+						}
+					finalResult = eval(finalResult);
+					inputtedCalcTemp = replaceAll(inputtedCalcTemp,location,finalResult);
+					}
 
 				return inputtedCalcTemp;
 				}
