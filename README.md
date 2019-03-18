@@ -12,7 +12,7 @@ https://lrusso.github.io/TinyMCESpreadsheetPlugin/demo.htm
 
 ## Formulas examples
 
-| FORMULA  | DETAIL|
+| FORMULA  | DETAILS |
 | :------------ |:--------------- |
 | 1+2+3 | Simple formula |
 | A1+A2+A3 | Cell referenced formula |
