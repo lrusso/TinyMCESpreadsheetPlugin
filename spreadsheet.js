@@ -100,7 +100,7 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 					var result = eval(inputtedCalcTemp);
 					if (typeof result === "undefined")
 						{
-						showError(decimalsUsed + "" +  thousandsSeparator + encodeURIComponent(inputtedCalc),parentElement,setDirty);
+						updateCell("Error", decimalsUsed + "" +  thousandsSeparator + encodeURIComponent(inputtedCalc),parentElement,setDirty);
 						}
 						else
 						{
@@ -119,28 +119,22 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 								}
 							result = replaceAll(result,resultNumber,resultNumberFinal);
 
-							parentElement.className = "spreadsheetTinyMCE" + decimalsUsed + "" +  thousandsSeparator + encodeURIComponent(inputtedCalc);
-							parentElement.innerHTML = result;
-
-							if (setDirty==true)
-								{
-								editor.insertContent("");
-								}
+							updateCell(result, decimalsUsed + "" +  thousandsSeparator + encodeURIComponent(inputtedCalc),parentElement,setDirty);
 							}
 							else
 							{
-							showError(decimalsUsed + "" +  thousandsSeparator + encodeURIComponent(inputtedCalc),parentElement,setDirty);
+							updateCell("Error", decimalsUsed + "" +  thousandsSeparator + encodeURIComponent(inputtedCalc),parentElement,setDirty);
 							}
 						}
 					}
 					else
 					{
-					showError(decimalsUsed + "" +  thousandsSeparator + encodeURIComponent(inputtedCalc),parentElement,setDirty);
+					updateCell("Error", decimalsUsed + "" +  thousandsSeparator + encodeURIComponent(inputtedCalc),parentElement,setDirty);
 					}
 				}
 				catch(err)
 				{
-				showError(decimalsUsed + "" +  thousandsSeparator + encodeURIComponent(inputtedCalc),parentElement,setDirty);
+				updateCell("Error", decimalsUsed + "" +  thousandsSeparator + encodeURIComponent(inputtedCalc),parentElement,setDirty);
 				}
 			}
 			else
@@ -223,10 +217,16 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 		return str.join(".");
 		}
 
-	function showError(className,parentElement,setDirty)
+	function updateCell(value, className,parentElement,setDirty)
 		{
 		parentElement.className = "spreadsheetTinyMCE" + className;
-		parentElement.innerHTML = "Error";
+
+		var latestChildNode = parentElement;
+		while (latestChildNode.firstChild!=null){latestChildNode = latestChildNode.firstChild;}
+		if (latestChildNode.nodeName=="BR"){latestChildNode = parentElement;}
+		try{latestChildNode.innerHTML = value;}catch(err){}
+		try{latestChildNode.textContent = value;}catch(err){}
+
 		if (setDirty==true)
 			{
 			editor.insertContent("");
@@ -344,7 +344,7 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 		{
 		var elementStoredNode = editor.selection.getNode();
 		var elementStoredNodeOffsetParent = editor.selection.getNode().offsetParent;
-		var elementStoredClassName = elementStoredNode.className;
+		var elementStoredClassName = "";
 		var elementStoredNodeName = elementStoredNode.nodeName;
 		var decimalsUsed = "2";
 		var thousandsSeparator = false;
@@ -354,12 +354,14 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 		if (elementStoredNodeName=="TD")
 			{
 			tableLocated = true
+			elementStoredClassName = elementStoredNode.className;
 			}
 		else if(elementStoredNodeOffsetParent!=null)
 			{
 			if (elementStoredNodeOffsetParent.nodeName=="TD")
 				{
 				tableLocated = true;
+				elementStoredClassName = elementStoredNodeOffsetParent.className;
 				}
 			}
 
