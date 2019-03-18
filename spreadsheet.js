@@ -126,17 +126,9 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 								resultNumberFinal = formatNumber(resultNumberFinal);
 								}
 							result = replaceAll(result,resultNumber,resultNumberFinal);
+
 							parentElement.className = "spreadsheetTinyMCE" + decimalsUsed + "" +  thousandsSeparator + encodeURIComponent(inputtedCalc);
-
-							var latestChildNode = parentElement;
-							while (latestChildNode.lastChild!=null)
-								{
-								latestChildNode = latestChildNode.lastChild;
-								}
-
-							try{latestChildNode.innerHTML = result;}catch(err){}
-							try{latestChildNode.textContent = result;}catch(err){}
-
+							parentElement.innerHTML = result;
 							if (setDirty==true)
 								{
 								editor.insertContent("");
