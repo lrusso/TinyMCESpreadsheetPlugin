@@ -126,9 +126,17 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 								resultNumberFinal = formatNumber(resultNumberFinal);
 								}
 							result = replaceAll(result,resultNumber,resultNumberFinal);
-
 							parentElement.className = "spreadsheetTinyMCE" + decimalsUsed + "" +  thousandsSeparator + encodeURIComponent(inputtedCalc);
-							parentElement.innerHTML = result;
+
+							var latestChildNode = parentElement;
+							while (latestChildNode.lastChild!=null)
+								{
+								latestChildNode = latestChildNode.lastChild;
+								}
+
+							try{latestChildNode.innerHTML = result;}catch(err){}
+							try{latestChildNode.textContent = result;}catch(err){}
+
 							if (setDirty==true)
 								{
 								editor.insertContent("");
@@ -371,7 +379,7 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 		{
 		var elementStoredNode = editor.selection.getNode();
 		var elementStoredNodeOffsetParent = editor.selection.getNode().offsetParent;
-		var elementStoredClassName = elementStoredNode.className;
+		var elementStoredClassName = "";
 		var elementStoredNodeName = elementStoredNode.nodeName;
 		var decimalsUsed = "2";
 		var thousandsSeparator = false;
@@ -381,12 +389,14 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 		if (elementStoredNodeName=="TD")
 			{
 			tableLocated = true
+			elementStoredClassName = elementStoredNode.className;
 			}
 		else if(elementStoredNodeOffsetParent!=null)
 			{
 			if (elementStoredNodeOffsetParent.nodeName=="TD")
 				{
 				tableLocated = true;
+				elementStoredClassName = elementStoredNodeOffsetParent.className;
 				}
 			}
 
