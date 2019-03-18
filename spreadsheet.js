@@ -1,7 +1,6 @@
 tinymce.PluginManager.add("spreadsheet", function(editor, url)
 	{
 	var toolbarIcon;
-
 	var STRING_MENU = "";
 	var STRING_TITLE = "";
 	var STRING_DECIMALS = "";
@@ -75,7 +74,6 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 								}
 							}
 						}
-
 					cellValueNumber = "(" + cellValueNumber + ")";
 
 					if (counter==1 || cellValue=="")
@@ -102,7 +100,7 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 					var result = eval(inputtedCalcTemp);
 					if (typeof result === "undefined")
 						{
-						showError("spreadsheetTinyMCE" + decimalsUsed + "" +  thousandsSeparator + encodeURIComponent(inputtedCalc),parentElement,setDirty);
+						showError(decimalsUsed + "" +  thousandsSeparator + encodeURIComponent(inputtedCalc),parentElement,setDirty);
 						}
 						else
 						{
@@ -111,8 +109,7 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 						var pattern3 = /[0-9-]*[{0,1}[\d]*[\.]{0,1}[\d]+/gm;
 						var match3 = pattern3.exec(result);
 						var resultNumber = match3[0];
-
-						resultNumberFinal = parseFloat(resultNumber).toFixed(decimalsUsed);
+						var resultNumberFinal = parseFloat(resultNumber).toFixed(decimalsUsed);
 
 						if (isNaN(resultNumberFinal)===false)
 							{
@@ -124,6 +121,7 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 
 							parentElement.className = "spreadsheetTinyMCE" + decimalsUsed + "" +  thousandsSeparator + encodeURIComponent(inputtedCalc);
 							parentElement.innerHTML = result;
+
 							if (setDirty==true)
 								{
 								editor.insertContent("");
@@ -131,18 +129,18 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 							}
 							else
 							{
-							showError("spreadsheetTinyMCE" + decimalsUsed + "" +  thousandsSeparator + encodeURIComponent(inputtedCalc),parentElement,setDirty);
+							showError(decimalsUsed + "" +  thousandsSeparator + encodeURIComponent(inputtedCalc),parentElement,setDirty);
 							}
 						}
 					}
 					else
 					{
-					showError("spreadsheetTinyMCE" + decimalsUsed + "" +  thousandsSeparator + encodeURIComponent(inputtedCalc),parentElement,setDirty);
+					showError(decimalsUsed + "" +  thousandsSeparator + encodeURIComponent(inputtedCalc),parentElement,setDirty);
 					}
 				}
 				catch(err)
 				{
-				showError("spreadsheetTinyMCE" + decimalsUsed + "" +  thousandsSeparator + encodeURIComponent(inputtedCalc),parentElement,setDirty);
+				showError(decimalsUsed + "" +  thousandsSeparator + encodeURIComponent(inputtedCalc),parentElement,setDirty);
 				}
 			}
 			else
@@ -222,7 +220,7 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 
 	function showError(className,parentElement,setDirty)
 		{
-		parentElement.className = className;
+		parentElement.className = "spreadsheetTinyMCE" + className;
 		parentElement.innerHTML = "Error";
 		if (setDirty==true)
 			{
@@ -232,6 +230,8 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 
 	function updateTable(revalidate)
 		{
+		var toolbarBarIconActive = false;
+
 		try
 			{
 			var elementStoredNode = editor.selection.getNode();
@@ -240,18 +240,11 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 				{
 				if (elementStoredNode.className.substring(0,18)=="spreadsheetTinyMCE")
 					{
-					toolbarIcon.active(true);
+					toolbarBarIconActive = true;
 					}
-					else
+				if (revalidate==true && editor.selection.getContent().length==0)
 					{
-					toolbarIcon.active(false);
-					}
-				if (revalidate==true)
-					{
-					if (editor.selection.getContent().length==0)
-						{
-						getTextNodesValues(editor, getTextNodesValues(editor,elementStoredNode.offsetParent));
-						}
+					getTextNodesValues(editor, getTextNodesValues(editor,elementStoredNode.offsetParent));
 					}
 				}
 			else if(elementStoredNodeOffsetParent!=null)
@@ -260,31 +253,24 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 					{
 					if (elementStoredNodeOffsetParent.className.substring(0,18)=="spreadsheetTinyMCE")
 						{
-						toolbarIcon.active(true);
+						toolbarBarIconActive = true;
 						}
-						else
+					if (revalidate==true && editor.selection.getContent().length==0)
 						{
-						toolbarIcon.active(false);
-						}
-					if (revalidate==true)
-						{
-						if (editor.selection.getContent().length==0)
-							{
-							getTextNodesValues(editor, getTextNodesValues(editor,elementStoredNodeOffsetParent.offsetParent));
-							}
+						getTextNodesValues(editor, getTextNodesValues(editor,elementStoredNodeOffsetParent.offsetParent));
 						}
 					}
-					else
-					{
-					toolbarIcon.active(false);
-					}
-				}
-				else
-				{
-				toolbarIcon.active(false);
 				}
 			}
 			catch(err)
+			{
+			}
+
+		if (toolbarBarIconActive==true)
+			{
+			toolbarIcon.active(true);
+			}
+			else
 			{
 			toolbarIcon.active(false);
 			}
@@ -299,27 +285,11 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 				if (node.className.substring(0,18)=="spreadsheetTinyMCE")
 					{
 					var elementStoredClassName = node.className;
-					var decimalsUsed = "2";
-					var thousandsSeparator = "0";
-
 					var tempValue = decodeURIComponent(elementStoredClassName);
-
-					var tempDecimals = tempValue.substring(18,19);
-					if (isNumber(tempDecimals))
-						{
-						decimalsUsed = tempDecimals;
-						}
-
-					var tempSeparator = tempValue.substring(19,20);
-					if (isNumber(tempSeparator))
-						{
-						if (tempSeparator=="1")
-							{
-							thousandsSeparator = "1";
-							}
-						}
-
+					var decimalsUsed = getDecimalsUsed(tempValue,"2");
+					var thousandsSeparator = getThousandsSeparator(tempValue);
 					var defaultCalc = tempValue.substring(20,tempValue.length);
+
 					updateField(defaultCalc,node,elementStoredClassName,decimalsUsed,thousandsSeparator,false);
 					}
 
@@ -332,24 +302,32 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 			}
 		}
 
+	function getDecimalsUsed(inputted,defaultValue)
+		{
+		var tempDecimals = inputted.substring(18,19);
+		if (isNumber(tempDecimals))
+			{
+			return tempDecimals;
+			}
+		return defaultValue;
+		}
+
+	function getThousandsSeparator(inputted)
+		{
+		var tempSeparator = inputted.substring(19,20);
+		if (isNumber(tempSeparator) && tempSeparator=="1")
+			{
+			return true;
+			}
+		return false;
+		}
+
 	function isNumber(input)
 		{
 		for(var i = 0; i < input.length; i++)
 			{
 			var character = input.charAt(i);
-			if (character!="0" &&
-				character!="1" &&
-				character!="2" &&
-				character!="3" &&
-				character!="4" &&
-				character!="5" &&
-				character!="6" &&
-				character!="7" &&
-				character!="8" &&
-				character!="9" &&
-				character!="-" &&
-				character!="."
-				)
+			if (character!="0" && character!="1" && character!="2" && character!="3" && character!="4" && character!="5" && character!="6" && character!="7" && character!="8" && character!="9" && character!="-" && character!=".")
 				{
 				return false;
 				}
@@ -391,21 +369,8 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 					if (elementStoredClassName.substring(0,18)=="spreadsheetTinyMCE")
 						{
 						var tempValue = decodeURIComponent(elementStoredClassName);
-
-						var tempDecimals = tempValue.substring(18,19);
-						if (isNumber(tempDecimals))
-							{
-							decimalsUsed = tempDecimals;
-							}
-
-						var tempSeparator = tempValue.substring(19,20);
-						if (isNumber(tempSeparator))
-							{
-							if (tempSeparator=="1")
-								{
-								thousandsSeparator = true;
-								}
-							}
+						var decimalsUsed = getDecimalsUsed(tempValue,"2");
+						var thousandsSeparator = getThousandsSeparator(tempValue);
 
 						defaultCalc = tempValue.substring(20,tempValue.length);
 						}
@@ -483,34 +448,11 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 			}
 		}
 
-	editor.on("nodechange", function(e)
-		{
-		updateTable(false);
-		});
-
-	editor.on("change", function(e)
-		{
-		updateTable(true);
-		});
-
-	editor.on("paste", function(e)
-		{
-		updateTable(true);
-		});
-
-	editor.on("keyup", function(e)
-		{
-		if (e.shiftKey==false && e.metaKey==false && e.ctrlKey==false)
-			{
-			if (e.keyCode!=37 && e.keyCode!=38 && e.keyCode!=37 && e.keyCode!=39 && e.keyCode!=40)
-				{
-				updateTable(true);
-				}
-			}
-		});
-
-	editor.addButton(  "spreadsheet", {tooltip: STRING_TITLE, icon: false, onPostRender: function(){toolbarIcon = this;}, onclick: function() {createDialog();}, image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAEGWlDQ1BrQ0dDb2xvclNwYWNlR2VuZXJpY1JHQgAAOI2NVV1oHFUUPrtzZyMkzlNsNIV0qD8NJQ2TVjShtLp/3d02bpZJNtoi6GT27s6Yyc44M7v9oU9FUHwx6psUxL+3gCAo9Q/bPrQvlQol2tQgKD60+INQ6Ium65k7M5lpurHeZe58853vnnvuuWfvBei5qliWkRQBFpquLRcy4nOHj4g9K5CEh6AXBqFXUR0rXalMAjZPC3e1W99Dwntf2dXd/p+tt0YdFSBxH2Kz5qgLiI8B8KdVy3YBevqRHz/qWh72Yui3MUDEL3q44WPXw3M+fo1pZuQs4tOIBVVTaoiXEI/MxfhGDPsxsNZfoE1q66ro5aJim3XdoLFw72H+n23BaIXzbcOnz5mfPoTvYVz7KzUl5+FRxEuqkp9G/Ajia219thzg25abkRE/BpDc3pqvphHvRFys2weqvp+krbWKIX7nhDbzLOItiM8358pTwdirqpPFnMF2xLc1WvLyOwTAibpbmvHHcvttU57y5+XqNZrLe3lE/Pq8eUj2fXKfOe3pfOjzhJYtB/yll5SDFcSDiH+hRkH25+L+sdxKEAMZahrlSX8ukqMOWy/jXW2m6M9LDBc31B9LFuv6gVKg/0Szi3KAr1kGq1GMjU/aLbnq6/lRxc4XfJ98hTargX++DbMJBSiYMIe9Ck1YAxFkKEAG3xbYaKmDDgYyFK0UGYpfoWYXG+fAPPI6tJnNwb7ClP7IyF+D+bjOtCpkhz6CFrIa/I6sFtNl8auFXGMTP34sNwI/JhkgEtmDz14ySfaRcTIBInmKPE32kxyyE2Tv+thKbEVePDfW/byMM1Kmm0XdObS7oGD/MypMXFPXrCwOtoYjyyn7BV29/MZfsVzpLDdRtuIZnbpXzvlf+ev8MvYr/Gqk4H/kV/G3csdazLuyTMPsbFhzd1UabQbjFvDRmcWJxR3zcfHkVw9GfpbJmeev9F08WW8uDkaslwX6avlWGU6NRKz0g/SHtCy9J30o/ca9zX3Kfc19zn3BXQKRO8ud477hLnAfc1/G9mrzGlrfexZ5GLdn6ZZrrEohI2wVHhZywjbhUWEy8icMCGNCUdiBlq3r+xafL549HQ5jH+an+1y+LlYBifuxAvRN/lVVVOlwlCkdVm9NOL5BE4wkQ2SMlDZU97hX86EilU/lUmkQUztTE6mx1EEPh7OmdqBtAvv8HdWpbrJS6tJj3n0CWdM6busNzRV3S9KTYhqvNiqWmuroiKgYhshMjmhTh9ptWhsF7970j/SbMrsPE1suR5z7DMC+P/Hs+y7ijrQAlhyAgccjbhjPygfeBTjzhNqy28EdkUh8C+DU9+z2v/oyeH791OncxHOs5y2AtTc7nb/f73TWPkD/qwBnjX8BoJ98VQNcC+8AAADXSURBVDgRxVMxDsIwDLShCITUBXXlB+nUHcGKYOxPywwSQ3eabv0H6VLTIEyJ0woEA14cn+8cn5QA/BjI+lipIwGsuR7KreBUaL3x+kqpVv8+JC+QEqXiAwBtJQ4jyPRF7yU+koAVa60xDMP50phZFEUTRFxAAzufC+BtwKQ8z6/3c1VBkiRNXdfccrI3gAjP0qcxhnCMmaN8FJ6FsixWRDR9tVCmadDn3xnIt36aHbEtWOg1BCB5ngUmDGUxrytZ0CH9J8n7/wbPd2A/iVyvz4Tl9eFfYzcgT1cIgY2vowAAAABJRU5ErkJggg=="});
-	editor.addMenuItem("spreadsheet", {text: STRING_MENU, context: "insert", onclick: function() {createDialog();} });
-
-	return{getMetadata: function (){return {name: "Spreadsheet plugin",url: "https://lrusso.com.ar"};}};
+	editor.on("nodechange",function(e){updateTable(false);});
+	editor.on("change",function(e){updateTable(true);});
+	editor.on("paste",function(e){updateTable(true);});
+	editor.on("keyup",function(e){if(e.shiftKey==false && e.metaKey==false && e.ctrlKey==false && e.keyCode!=37 && e.keyCode!=38 && e.keyCode!=37 && e.keyCode!=39 && e.keyCode!=40){updateTable(true);}});
+	editor.addButton("spreadsheet",{tooltip:STRING_TITLE,icon:false,onPostRender:function(){toolbarIcon=this;},onclick:function(){createDialog();},image:"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAEGWlDQ1BrQ0dDb2xvclNwYWNlR2VuZXJpY1JHQgAAOI2NVV1oHFUUPrtzZyMkzlNsNIV0qD8NJQ2TVjShtLp/3d02bpZJNtoi6GT27s6Yyc44M7v9oU9FUHwx6psUxL+3gCAo9Q/bPrQvlQol2tQgKD60+INQ6Ium65k7M5lpurHeZe58853vnnvuuWfvBei5qliWkRQBFpquLRcy4nOHj4g9K5CEh6AXBqFXUR0rXalMAjZPC3e1W99Dwntf2dXd/p+tt0YdFSBxH2Kz5qgLiI8B8KdVy3YBevqRHz/qWh72Yui3MUDEL3q44WPXw3M+fo1pZuQs4tOIBVVTaoiXEI/MxfhGDPsxsNZfoE1q66ro5aJim3XdoLFw72H+n23BaIXzbcOnz5mfPoTvYVz7KzUl5+FRxEuqkp9G/Ajia219thzg25abkRE/BpDc3pqvphHvRFys2weqvp+krbWKIX7nhDbzLOItiM8358pTwdirqpPFnMF2xLc1WvLyOwTAibpbmvHHcvttU57y5+XqNZrLe3lE/Pq8eUj2fXKfOe3pfOjzhJYtB/yll5SDFcSDiH+hRkH25+L+sdxKEAMZahrlSX8ukqMOWy/jXW2m6M9LDBc31B9LFuv6gVKg/0Szi3KAr1kGq1GMjU/aLbnq6/lRxc4XfJ98hTargX++DbMJBSiYMIe9Ck1YAxFkKEAG3xbYaKmDDgYyFK0UGYpfoWYXG+fAPPI6tJnNwb7ClP7IyF+D+bjOtCpkhz6CFrIa/I6sFtNl8auFXGMTP34sNwI/JhkgEtmDz14ySfaRcTIBInmKPE32kxyyE2Tv+thKbEVePDfW/byMM1Kmm0XdObS7oGD/MypMXFPXrCwOtoYjyyn7BV29/MZfsVzpLDdRtuIZnbpXzvlf+ev8MvYr/Gqk4H/kV/G3csdazLuyTMPsbFhzd1UabQbjFvDRmcWJxR3zcfHkVw9GfpbJmeev9F08WW8uDkaslwX6avlWGU6NRKz0g/SHtCy9J30o/ca9zX3Kfc19zn3BXQKRO8ud477hLnAfc1/G9mrzGlrfexZ5GLdn6ZZrrEohI2wVHhZywjbhUWEy8icMCGNCUdiBlq3r+xafL549HQ5jH+an+1y+LlYBifuxAvRN/lVVVOlwlCkdVm9NOL5BE4wkQ2SMlDZU97hX86EilU/lUmkQUztTE6mx1EEPh7OmdqBtAvv8HdWpbrJS6tJj3n0CWdM6busNzRV3S9KTYhqvNiqWmuroiKgYhshMjmhTh9ptWhsF7970j/SbMrsPE1suR5z7DMC+P/Hs+y7ijrQAlhyAgccjbhjPygfeBTjzhNqy28EdkUh8C+DU9+z2v/oyeH791OncxHOs5y2AtTc7nb/f73TWPkD/qwBnjX8BoJ98VQNcC+8AAADXSURBVDgRxVMxDsIwDLShCITUBXXlB+nUHcGKYOxPywwSQ3eabv0H6VLTIEyJ0woEA14cn+8cn5QA/BjI+lipIwGsuR7KreBUaL3x+kqpVv8+JC+QEqXiAwBtJQ4jyPRF7yU+koAVa60xDMP50phZFEUTRFxAAzufC+BtwKQ8z6/3c1VBkiRNXdfccrI3gAjP0qcxhnCMmaN8FJ6FsixWRDR9tVCmadDn3xnIt36aHbEtWOg1BCB5ngUmDGUxrytZ0CH9J8n7/wbPd2A/iVyvz4Tl9eFfYzcgT1cIgY2vowAAAABJRU5ErkJggg=="});
+	editor.addMenuItem("spreadsheet",{text:STRING_MENU,context:"insert",onclick:function(){createDialog();}});
+	return{getMetadata:function(){return{name:"Spreadsheet plugin",url:"https://lrusso.com.ar"};}};
 	});
