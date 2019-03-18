@@ -115,7 +115,7 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 							{
 							if (thousandsSeparator=="1")
 								{
-								resultNumberFinal = formatNumber(resultNumberFinal,decimalsUsed);
+								resultNumberFinal = formatNumber(resultNumberFinal);
 								}
 							result = replaceAll(result,resultNumber,resultNumberFinal);
 
@@ -213,18 +213,9 @@ tinymce.PluginManager.add("spreadsheet", function(editor, url)
 		return str.replace(new RegExp(find, "g"), replace);
 		}
 
-	function formatNumber(num,decimalsUsed)
+	function formatNumber (num)
 		{
-		num = num.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-
-		if (decimalsUsed>0)
-			{
-			var pattern = /[.].*/g;
-			var match = pattern.exec(num);
-			num = replaceAll(num,match[0],match[0].replace(/\s*,\s*|\s+,/g, ""));
-			}
-
-		return num;
+		return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
 		}
 
 	function showError(className,parentElement,setDirty)
