@@ -6,7 +6,7 @@ Operators + - * / % ( ) and cells references are allowed.
 
 ![alt screenshot](https://raw.githubusercontent.com/lrusso/TinyMCESpreadsheetPlugin/master/spreadsheet.png)
 
-## Demo:
+## Demo
 
 https://lrusso.github.io/TinyMCESpreadsheetPlugin/demo.htm
 
